@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8"/>
@@ -135,45 +136,45 @@ var adminClickCount=0;
 var adminClickTimer=null;
 
 var menu=[
-{cat:"軟Q手工蛋餅",hasSauce:true,items:[
-{id:1,name:"原味招牌蛋餅",price:28,desc:"每日新鮮手煎餅皮+自製醬料",hot:true},
-{id:2,name:"玉米蛋餅",price:33,desc:"香甜玉米粒，口感豐富"},
-{id:3,name:"紅蘿蔔蛋餅",price:35,desc:"健康蔬食，清甜爽口"},
-{id:4,name:"塔香蛋餅",price:35,desc:"九層塔香氣四溢"},
-{id:5,name:"青椒蛋餅",price:38,desc:"清脆青椒，清爽健康"},
-{id:6,name:"起士蛋餅",price:38,desc:"濃郁起士，香氣滿溢",hot:true},
-{id:7,name:"金針菇蛋餅",price:38,desc:"鮮嫩金針菇，口感Q彈"},
-{id:8,name:"高麗菜蛋餅",price:40,desc:"新鮮高麗菜，清甜爽脆"},
-{id:9,name:"馬鈴薯蛋餅",price:40,desc:"鬆軟馬鈴薯，飽足感十足"},
-{id:10,name:"地瓜蛋餅",price:40,desc:"香甜地瓜，自然甜味"},
-{id:11,name:"南瓜蛋餅",price:40,desc:"濃郁南瓜，營養豐富"},
-{id:12,name:"總匯蛋餅",price:55,desc:"多種食材，豐盛美味",hot:true}
+{cat:“軟Q手工蛋餅”,hasSauce:true,items:[
+{id:1,name:“原味招牌蛋餅”,price:28,desc:“每日新鮮手煎餅皮+自製醬料”,hot:true},
+{id:2,name:“玉米蛋餅”,price:33,desc:“香甜玉米粒，口感豐富”},
+{id:3,name:“紅蘿蔔蛋餅”,price:35,desc:“健康蔬食，清甜爽口”},
+{id:4,name:“塔香蛋餅”,price:35,desc:“九層塔香氣四溢”},
+{id:5,name:“青椒蛋餅”,price:38,desc:“清脆青椒，清爽健康”},
+{id:6,name:“起士蛋餅”,price:38,desc:“濃郁起士，香氣滿溢”,hot:true},
+{id:7,name:“金針菇蛋餅”,price:38,desc:“鮮嫩金針菇，口感Q彈”},
+{id:8,name:“高麗菜蛋餅”,price:40,desc:“新鮮高麗菜，清甜爽脆”},
+{id:9,name:“馬鈴薯蛋餅”,price:40,desc:“鬆軟馬鈴薯，飽足感十足”},
+{id:10,name:“地瓜蛋餅”,price:40,desc:“香甜地瓜，自然甜味”},
+{id:11,name:“南瓜蛋餅”,price:40,desc:“濃郁南瓜，營養豐富”},
+{id:12,name:“總匯蛋餅”,price:55,desc:“多種食材，豐盛美味”,hot:true}
 ]},
-{cat:"元氣吐司",items:[
-{id:13,name:"玉米蛋吐司",price:35,desc:"內含生菜、黃瓜、蕃茄"},
-{id:14,name:"水果吐司",price:35,desc:"新鮮水果，清爽美味"},
-{id:15,name:"香煎馬鈴薯吐司",price:38,desc:"香煎馬鈴薯，鬆軟可口"},
-{id:16,name:"香煎地瓜吐司",price:38,desc:"香甜地瓜，健康美味"},
-{id:17,name:"歐姆起司蛋吐司",price:40,desc:"含起士，濃郁香滑",hot:true},
-{id:18,name:"南瓜蛋吐司",price:48,desc:"南瓜內餡，營養滿分"},
-{id:19,name:"馬鈴薯歐姆蛋吐司",price:55,desc:"含起士，豐盛飽足"},
-{id:20,name:"地瓜歐姆蛋吐司",price:55,desc:"含起士，香甜濃郁"},
-{id:21,name:"地瓜總匯吐司",price:65,desc:"含起士，多種食材",hot:true},
-{id:22,name:"馬鈴薯總匯吐司",price:65,desc:"含起士，豐盛總匯"}
+{cat:“元氣吐司”,items:[
+{id:13,name:“玉米蛋吐司”,price:35,desc:“內含生菜、黃瓜、蕃茄”},
+{id:14,name:“水果吐司”,price:35,desc:“新鮮水果，清爽美味”},
+{id:15,name:“香煎馬鈴薯吐司”,price:38,desc:“香煎馬鈴薯，鬆軟可口”},
+{id:16,name:“香煎地瓜吐司”,price:38,desc:“香甜地瓜，健康美味”},
+{id:17,name:“歐姆起司蛋吐司”,price:40,desc:“含起士，濃郁香滑”,hot:true},
+{id:18,name:“南瓜蛋吐司”,price:48,desc:“南瓜內餡，營養滿分”},
+{id:19,name:“馬鈴薯歐姆蛋吐司”,price:55,desc:“含起士，豐盛飽足”},
+{id:20,name:“地瓜歐姆蛋吐司”,price:55,desc:“含起士，香甜濃郁”},
+{id:21,name:“地瓜總匯吐司”,price:65,desc:“含起士，多種食材”,hot:true},
+{id:22,name:“馬鈴薯總匯吐司”,price:65,desc:“含起士，豐盛總匯”}
 ]},
-{cat:"活力單點",items:[
-{id:23,name:"花生吐司",price:20,desc:"香濃花生醬，經典美味"},
-{id:24,name:"巧克力吐司",price:20,desc:"香甜巧克力，幸福滋味"},
-{id:25,name:"芝麻吐司",price:25,desc:"香濃芝麻，營養豐富"},
-{id:26,name:"香煎馬鈴薯片",price:35,desc:"香脆馬鈴薯，酥脆好吃"},
-{id:27,name:"香煎地瓜片",price:35,desc:"香甜地瓜片，健康美味"},
-{id:28,name:"厚蛋歐姆",price:38,desc:"含起士，厚實香滑",hot:true}
+{cat:“活力單點”,items:[
+{id:23,name:“花生吐司”,price:20,desc:“香濃花生醬，經典美味”},
+{id:24,name:“巧克力吐司”,price:20,desc:“香甜巧克力，幸福滋味”},
+{id:25,name:“芝麻吐司”,price:25,desc:“香濃芝麻，營養豐富”},
+{id:26,name:“香煎馬鈴薯片”,price:35,desc:“香脆馬鈴薯，酥脆好吃”},
+{id:27,name:“香煎地瓜片”,price:35,desc:“香甜地瓜片，健康美味”},
+{id:28,name:“厚蛋歐姆”,price:38,desc:“含起士，厚實香滑”,hot:true}
 ]},
-{cat:"活力飲品",items:[
-{id:29,name:"非基改豆漿",price:20,desc:"純正豆漿，香醇濃郁",hot:true},
-{id:30,name:"錫蘭紅茶",price:20,desc:"清香紅茶，提神醒腦"},
-{id:31,name:"豆漿紅茶",price:20,desc:"豆漿加紅茶，獨特風味"},
-{id:32,name:"芝麻豆漿",price:25,desc:"芝麻豆漿，香濃順口"}
+{cat:“活力飲品”,items:[
+{id:29,name:“非基改豆漿”,price:20,desc:“純正豆漿，香醇濃郁”,hot:true},
+{id:30,name:“錫蘭紅茶”,price:20,desc:“清香紅茶，提神醒腦”},
+{id:31,name:“豆漿紅茶”,price:20,desc:“豆漿加紅茶，獨特風味”},
+{id:32,name:“芝麻豆漿”,price:25,desc:“芝麻豆漿，香濃順口”}
 ]}
 ];
 
@@ -182,158 +183,159 @@ for(var s=0;s<menu.length;s++)for(var i=0;i<menu[s].items.length;i++){var it=men
 var cart={};
 var sauce={};
 var activeCat=null;
-var sauceOptions=["自製醬油","自製番茄醬","不要醬"];
+var sauceOptions=[“自製醬油”,“自製番茄醬”,“不要醬”];
 
 function adminClick(){
-  adminClickCount++;
-  if(adminClickTimer)clearTimeout(adminClickTimer);
-  adminClickTimer=setTimeout(function(){adminClickCount=0;},1500);
-  if(adminClickCount>=3){
-    adminClickCount=0;
-    document.getElementById("pwd-overlay").style.display="flex";
-    document.getElementById("pwd-input").value="";
-    document.getElementById("pwd-error").style.display="none";
-    setTimeout(function(){document.getElementById("pwd-input").focus();},100);
-  }
+adminClickCount++;
+if(adminClickTimer)clearTimeout(adminClickTimer);
+adminClickTimer=setTimeout(function(){adminClickCount=0;},1500);
+if(adminClickCount>=3){
+adminClickCount=0;
+document.getElementById(“pwd-overlay”).style.display=“flex”;
+document.getElementById(“pwd-input”).value=””;
+document.getElementById(“pwd-error”).style.display=“none”;
+setTimeout(function(){document.getElementById(“pwd-input”).focus();},100);
+}
 }
 function checkPwd(){
-  var v=document.getElementById("pwd-input").value;
-  if(v===ADMIN_PWD){
-    isAdmin=true;
-    document.getElementById("pwd-overlay").style.display="none";
-    document.getElementById("admin-bar").style.display="flex";
-    render();
-  } else {
-    document.getElementById("pwd-error").style.display="block";
-    document.getElementById("pwd-input").value="";
-  }
+var v=document.getElementById(“pwd-input”).value;
+if(v===ADMIN_PWD){
+isAdmin=true;
+document.getElementById(“pwd-overlay”).style.display=“none”;
+document.getElementById(“admin-bar”).style.display=“flex”;
+render();
+} else {
+document.getElementById(“pwd-error”).style.display=“block”;
+document.getElementById(“pwd-input”).value=””;
 }
-function closePwd(){document.getElementById("pwd-overlay").style.display="none";}
-function exitAdmin(){isAdmin=false;document.getElementById("admin-bar").style.display="none";render();}
+}
+function closePwd(){document.getElementById(“pwd-overlay”).style.display=“none”;}
+function exitAdmin(){isAdmin=false;document.getElementById(“admin-bar”).style.display=“none”;render();}
 function toggleSoldOut(id){
-  soldOut[id]=!soldOut[id];
-  if(soldOut[id]&&cart[id]){delete cart[id];delete sauce[id];}
-  render();
+soldOut[id]=!soldOut[id];
+if(soldOut[id]&&cart[id]){delete cart[id];delete sauce[id];}
+render();
 }
 
 function q(id){return cart[id]||0;}
-function add(id){if(soldOut[id])return;cart[id]=(cart[id]||0)+1;if(!sauce[id])sauce[id]="自製醬油";render();}
-function rem(id){if(!cart[id])return;cart[id]--;if(cart[id]<=0){delete cart[id];delete sauce[id];}render();}
+function add(id){if(soldOut[id])return;cart[id]=(cart[id]||0)+1;if(!sauce[id])sauce[id]=“自製醬油”;render();}
+function rem(id){if(!cart[id])return;cart[id]–;if(cart[id]<=0){delete cart[id];delete sauce[id];}render();}
 function setSauce(id,s){sauce[id]=s;renderMenu();}
 function setCat(c){activeCat=c;render();}
-function openCart(){document.getElementById("overlay").style.display="block";document.getElementById("cart-panel").style.display="block";renderCart();}
-function closeCart(){document.getElementById("overlay").style.display="none";document.getElementById("cart-panel").style.display="none";}
-function closeSuccess(){document.getElementById("success-overlay").style.display="none";}
+function openCart(){document.getElementById(“overlay”).style.display=“block”;document.getElementById(“cart-panel”).style.display=“block”;renderCart();}
+function closeCart(){document.getElementById(“overlay”).style.display=“none”;document.getElementById(“cart-panel”).style.display=“none”;}
+function closeSuccess(){document.getElementById(“success-overlay”).style.display=“none”;}
 function render(){renderTabs();renderMenu();renderCount();}
 
 function renderTabs(){
-var h='<button class="cat-tab '+(activeCat===null?'active':'')+'" onclick="setCat(null)">全部</button>';
-for(var i=0;i<menu.length;i++){var c=menu[i].cat;h+='<button class="cat-tab '+(activeCat===c?'active':'')+'" onclick="setCat(\''+c+'\')">'+c+'</button>';}
-document.getElementById("cat-tabs").innerHTML=h;
+var h=’<button class="cat-tab '+(activeCat===null?'active':'')+'" onclick="setCat(null)">全部</button>’;
+for(var i=0;i<menu.length;i++){var c=menu[i].cat;h+=’<button class="cat-tab '+(activeCat===c?'active':'')+'" onclick="setCat(\''+c+'\')">’+c+’</button>’;}
+document.getElementById(“cat-tabs”).innerHTML=h;
 }
 
 function renderMenu(){
 var filtered=activeCat?menu.filter(function(s){return s.cat===activeCat;}):menu;
-var h="";
+var h=””;
 for(var s=0;s<filtered.length;s++){
 var sec=filtered[s];
-h+='<div class="section-title">'+sec.cat+'</div><div class="menu-grid">';
+h+=’<div class="section-title">’+sec.cat+’</div><div class="menu-grid">’;
 for(var i=0;i<sec.items.length;i++){
 var it=sec.items[i];var qt=q(it.id);var so=soldOut[it.id];
-h+='<div class="menu-card'+(so?' sold-out':')+'">';
-if(so){h+='<div class="sold-out-badge">售完</div>';}
-else if(it.hot){h+='<div class="popular-badge">熱銷</div>';}
-h+='<div class="card-top">';
-h+='<div class="item-info"><div class="item-name'+(so?' sold-out-text':'')+'">' +it.name+'</div><div class="item-desc">'+it.desc+'</div></div>';
-h+='<div class="item-right"><div class="item-price'+(so?' sold-out-text':'')+'">' +' $'+it.price+'</div>';
+h+=’<div class="menu-card'+(so?' sold-out':'')+'">’;
+if(so){h+=’<div class="sold-out-badge">售完</div>’;}
+else if(it.hot){h+=’<div class="popular-badge">熱銷</div>’;}
+h+=’<div class="card-top">’;
+h+=’<div class="item-info"><div class="item-name'+(so?' sold-out-text':'')+'">’ +it.name+’</div><div class="item-desc">’+it.desc+’</div></div>’;
+h+=’<div class="item-right"><div class="item-price'+(so?' sold-out-text':'')+'">’ +’ $’+it.price+’</div>’;
 if(isAdmin){
-var btnClass=so?'toggle-sold-btn unmark':'toggle-sold-btn mark';
-var btnText=so?'恢復供應':'標記售完';
-h+='<button class="'+btnClass+'" onclick="toggleSoldOut('+it.id+')">'+btnText+'</button>';
+var btnClass=so?‘toggle-sold-btn unmark’:‘toggle-sold-btn mark’;
+var btnText=so?‘恢復供應’:‘標記售完’;
+h+=’<button class="'+btnClass+'" onclick="toggleSoldOut('+it.id+')">’+btnText+’</button>’;
 } else if(so){
-h+='<button class="sold-out-btn">售完</button>';
+h+=’<button class="sold-out-btn">售完</button>’;
 } else if(qt===0){
-h+='<button class="add-btn" onclick="add('+it.id+')">加入</button>';
+h+=’<button class="add-btn" onclick="add('+it.id+')">加入</button>’;
 } else {
-h+='<div class="qty-control"><button class="qty-btn minus" onclick="rem('+it.id+')">-</button><span class="qty-num">'+qt+'</span><button class="qty-btn plus" onclick="add('+it.id+')">+</button></div>';
+h+=’<div class="qty-control"><button class="qty-btn minus" onclick="rem('+it.id+')">-</button><span class="qty-num">’+qt+’</span><button class="qty-btn plus" onclick="add('+it.id+')">+</button></div>’;
 }
-h+='</div></div>';
+h+=’</div></div>’;
 if(sec.hasSauce&&qt>0&&!so){
-h+='<div class="sauce-row">';
+h+=’<div class="sauce-row">’;
 for(var k=0;k<sauceOptions.length;k++){
-var sv=sauceOptions[k];var sel=(sauce[it.id]===sv)?'selected':'';
-h+='<button class="sauce-btn '+sel+'" onclick="setSauce('+it.id+',\''+sv+'\')">'+sv+'</button>';
+var sv=sauceOptions[k];var sel=(sauce[it.id]===sv)?‘selected’:’’;
+h+=’<button class="sauce-btn '+sel+'" onclick="setSauce('+it.id+',\''+sv+'\')">’+sv+’</button>’;
 }
-h+='</div>';
+h+=’</div>’;
 }
-h+='</div>';
+h+=’</div>’;
 }
-h+='</div>';
+h+=’</div>’;
 }
-document.getElementById("menu-content").innerHTML=h;
+document.getElementById(“menu-content”).innerHTML=h;
 }
 
 function renderCount(){
 var t=0;for(var id in cart)t+=cart[id];
-var b=document.getElementById("cart-count");
-b.textContent=t;b.style.display=t>0?"inline-flex":"none";
+var b=document.getElementById(“cart-count”);
+b.textContent=t;b.style.display=t>0?“inline-flex”:“none”;
 }
 
 function renderCart(){
 var ids=Object.keys(cart).filter(function(id){return cart[id]>0;});
 var tc=0,tp=0;
 for(var i=0;i<ids.length;i++){tc+=cart[ids[i]];tp+=imap[ids[i]].price*cart[ids[i]];}
-if(ids.length===0){document.getElementById("cart-body").innerHTML='<div class="empty-cart">購物車是空的，快去選些美食吧！</div>';return;}
-var h="";
+if(ids.length===0){document.getElementById(“cart-body”).innerHTML=’<div class="empty-cart">購物車是空的，快去選些美食吧！</div>’;return;}
+var h=””;
 for(var i=0;i<ids.length;i++){
 var id=ids[i];var it=imap[id];var qt=cart[id];
-h+='<div class="cart-item"><div class="cart-item-info"><div class="cart-item-name">'+it.name+'</div>';
-if(sauce[id])h+='<div class="cart-item-sub">醬料：'+sauce[id]+'</div>';
-h+='<div class="cart-item-sub">$'+it.price+' x '+qt+'</div></div>';
-h+='<div class="qty-control"><button class="qty-btn minus" onclick="rem('+id+');renderCart()">-</button><span class="qty-num">'+qt+'</span><button class="qty-btn plus" onclick="add('+id+');renderCart()">+</button></div></div>';
+h+=’<div class="cart-item"><div class="cart-item-info"><div class="cart-item-name">’+it.name+’</div>’;
+if(sauce[id])h+=’<div class="cart-item-sub">醬料：’+sauce[id]+’</div>’;
+h+=’<div class="cart-item-sub">$’+it.price+’ x ‘+qt+’</div></div>’;
+h+=’<div class="qty-control"><button class="qty-btn minus" onclick="rem('+id+');renderCart()">-</button><span class="qty-num">’+qt+’</span><button class="qty-btn plus" onclick="add('+id+');renderCart()">+</button></div></div>’;
 }
-h+='<div class="cart-summary"><div class="summary-row"><span>品項數量</span><span>'+tc+' 件</span></div><div class="summary-total"><span>合計</span><span>$'+tp+'</span></div></div>';
+h+=’<div class="cart-summary"><div class="summary-row"><span>品項數量</span><span>’+tc+’ 件</span></div><div class="summary-total"><span>合計</span><span>$’+tp+’</span></div></div>’;
 var times=[];
 var now=new Date();
 var start=now.getHours()*60+now.getMinutes();
 start=Math.ceil(start/15)*15+15;
-for(var m=0;m<8;m++){var t2=start+m*15;var hh=Math.floor(t2/60)%24;var mm=t2%60;times.push((hh<10?"0":"")+hh+":"+(mm<10?"0":"")+mm);}
-h+='<label class="field-label">取餐時間</label>';
-h+='<select class="time-select" id="pickup-time"><option value="">請選擇取餐時間</option>';
-for(var i=0;i<times.length;i++)h+='<option>'+times[i]+'</option>';
-h+='</select>';
-h+='<label class="field-label">聯絡電話</label>';
-h+='<input class="field-input" id="phone-input" type="tel" placeholder="請輸入手機號碼"/>';
-h+='<label class="field-label">備註（外帶/內用桌號/特殊需求）</label>';
-h+='<textarea class="note-input" id="note-input" rows="2" placeholder="例：外帶、內用3號桌、不加蛋..."></textarea>';
-h+='<div class="sending-msg" id="sending-msg" style="display:none">傳送中...</div>';
-h+='<button class="order-btn" id="order-btn" onclick="placeOrder()">立即下單</button>';
-document.getElementById("cart-body").innerHTML=h;
+for(var m=0;m<8;m++){var t2=start+m*15;var hh=Math.floor(t2/60)%24;var mm=t2%60;times.push((hh<10?“0”:””)+hh+”:”+(mm<10?“0”:””)+mm);}
+h+=’<label class="field-label">取餐時間</label>’;
+h+=’<select class="time-select" id="pickup-time"><option value="">請選擇取餐時間</option>’;
+for(var i=0;i<times.length;i++)h+=’<option>’+times[i]+’</option>’;
+h+=’</select>’;
+h+=’<label class="field-label">聯絡電話</label>’;
+h+=’<input class="field-input" id="phone-input" type="tel" placeholder="請輸入手機號碼"/>’;
+h+=’<label class="field-label">備註（外帶/內用桌號/特殊需求）</label>’;
+h+=’<textarea class="note-input" id="note-input" rows="2" placeholder="例：外帶、內用3號桌、不加蛋..."></textarea>’;
+h+=’<div class="sending-msg" id="sending-msg" style="display:none">傳送中…</div>’;
+h+=’<button class="order-btn" id="order-btn" onclick="placeOrder()">立即下單</button>’;
+document.getElementById(“cart-body”).innerHTML=h;
 }
 
 function placeOrder(){
 var ids=Object.keys(cart).filter(function(id){return cart[id]>0;});
 if(ids.length===0)return;
-var phone=document.getElementById("phone-input").value.trim();
-if(!phone){alert("請填寫聯絡電話！");return;}
-var pickup=document.getElementById("pickup-time").value;
-if(!pickup){alert("請選擇取餐時間！");return;}
+var phone=document.getElementById(“phone-input”).value.trim();
+if(!phone){alert(“請填寫聯絡電話！”);return;}
+var pickup=document.getElementById(“pickup-time”).value;
+if(!pickup){alert(“請選擇取餐時間！”);return;}
 var items=ids.map(function(id){var it={id:Number(id),name:imap[id].name,price:imap[id].price,qty:cart[id]};if(sauce[id])it.sauce=sauce[id];return it;});
 var total=items.reduce(function(s,i){return s+i.price*i.qty;},0);
-var note=document.getElementById("note-input").value;
-var oid=String(orderCounter).padStart(3,"0");
+var note=document.getElementById(“note-input”).value;
+var oid=String(orderCounter).padStart(3,“0”);
 orderCounter++;
-document.getElementById("order-btn").disabled=true;
-document.getElementById("sending-msg").style.display="block";
-fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({items:items,total:total,note:note,orderId:oid,phone:phone,pickup:pickup})})
+document.getElementById(“order-btn”).disabled=true;
+document.getElementById(“sending-msg”).style.display=“block”;
+fetch(API,{method:“POST”,headers:{“Content-Type”:“application/json”},body:JSON.stringify({items:items,total:total,note:note,orderId:oid,phone:phone,pickup:pickup})})
 .catch(function(e){console.error(e);})
 .finally(function(){
 cart={};sauce={};closeCart();renderCount();
-document.getElementById("success-msg").innerHTML="感謝您的訂購！<br>訂單編號：#"+oid+"<br>取餐時間："+pickup+"<br>請稍候，我們盡快為您準備";
-document.getElementById("success-overlay").style.display="flex";
+document.getElementById(“success-msg”).innerHTML=“感謝您的訂購！<br>訂單編號：#”+oid+”<br>取餐時間：”+pickup+”<br>請稍候，我們盡快為您準備”;
+document.getElementById(“success-overlay”).style.display=“flex”;
 });
 }
 render();
 </script>
+
 </body>
 </html>
