@@ -1,82 +1,76 @@
 <!DOCTYPE html>
-
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>如意樂活蔬食早午餐</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500&display=swap" rel="stylesheet" />
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Noto Sans TC', sans-serif; background: #f0f7f0; color: #1a3a1a; }
-    .header { background: linear-gradient(135deg, #2d6a2d, #4a9e4a); color: #fff; padding: 16px 20px 0; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 16px rgba(45,106,45,0.3); }
-    .header-top { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; }
-    .brand { font-family: 'Noto Serif TC', serif; font-size: 18px; font-weight: 700; }
-    .brand span { color: #c8f0a0; }
-    .cart-btn { background: #c8f0a0; border: none; border-radius: 50px; padding: 7px 14px; font-size: 13px; font-weight: 500; color: #1a3a1a; cursor: pointer; display: flex; align-items: center; gap: 5px; }
-    .cart-badge { background: #2d6a2d; color: #c8f0a0; border-radius: 50%; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
-    .header-sub { font-size: 11px; color: #d4f0d4; padding-bottom: 10px; }
-    .cat-tabs { display: flex; gap: 6px; padding: 10px 0; overflow-x: auto; border-top: 1px solid rgba(255,255,255,0.2); }
-    .cat-tabs::-webkit-scrollbar { display: none; }
-    .cat-tab { background: transparent; border: 1px solid rgba(255,255,255,0.4); color: #d4f0d4; border-radius: 20px; padding: 4px 12px; font-size: 11px; cursor: pointer; white-space: nowrap; font-family: 'Noto Sans TC', sans-serif; }
-    .cat-tab.active { background: #c8f0a0; border-color: #c8f0a0; color: #1a3a1a; font-weight: 500; }
-    .content { padding: 12px 16px; max-width: 600px; margin: 0 auto; }
-    .section-title { font-family: 'Noto Serif TC', serif; font-size: 15px; font-weight: 700; color: #2d6a2d; margin: 16px 0 10px; padding-bottom: 6px; border-bottom: 2px solid #a8d8a8; }
-    .menu-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 6px; }
-    .menu-card { background: #fff; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(45,106,45,0.08); border: 1px solid #d4ecd4; position: relative; overflow: hidden; }
-    .popular-badge { position: absolute; top: 0; right: 0; background: #4a9e4a; color: #fff; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 0 12px 0 8px; }
-    .item-info { flex: 1; min-width: 0; }
-    .item-name { font-size: 14px; font-weight: 500; color: #1a3a1a; margin-bottom: 2px; }
-    .item-desc { font-size: 11px; color: #5a7a5a; line-height: 1.3; }
-    .item-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
-    .item-price { font-family: 'Noto Serif TC', serif; font-size: 15px; font-weight: 700; color: #2d6a2d; }
-    .qty-control { display: flex; align-items: center; gap: 6px; background: #f0f7f0; border-radius: 20px; padding: 2px; border: 1px solid #a8d8a8; }
-    .qty-btn { width: 24px; height: 24px; border-radius: 50%; border: none; cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
-    .qty-btn.minus { background: #d4ecd4; color: #2d6a2d; }
-    .qty-btn.plus { background: #2d6a2d; color: #c8f0a0; }
-    .qty-num { font-weight: 600; font-size: 13px; min-width: 16px; text-align: center; color: #1a3a1a; }
-    .add-btn { background: #2d6a2d; color: #c8f0a0; border: none; border-radius: 20px; padding: 5px 12px; font-size: 12px; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; }
-    .overlay { position: fixed; inset: 0; background: rgba(26,58,26,0.5); z-index: 200; display: none; }
-    .cart-panel { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-radius: 20px 20px 0 0; padding: 18px 18px 30px; z-index: 201; max-height: 80vh; overflow-y: auto; max-width: 600px; margin: 0 auto; display: none; }
-    .cart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid #d4ecd4; }
-    .cart-title { font-family: 'Noto Serif TC', serif; font-size: 17px; font-weight: 700; color: #1a3a1a; }
-    .close-btn { background: #d4ecd4; border: none; border-radius: 50%; width: 30px; height: 30px; font-size: 16px; cursor: pointer; color: #2d6a2d; }
-    .cart-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #eaf4ea; }
-    .cart-item-info { flex: 1; }
-    .cart-item-name { font-size: 13px; font-weight: 500; color: #1a3a1a; }
-    .cart-item-price { font-size: 11px; color: #4a9e4a; margin-top: 2px; }
-    .empty-cart { text-align: center; padding: 36px 0; color: #5a7a5a; font-size: 13px; }
-    .cart-summary { background: #f0f7f0; border-radius: 10px; padding: 14px; margin: 14px 0; }
-    .summary-row { display: flex; justify-content: space-between; font-size: 12px; color: #5a7a5a; margin-bottom: 5px; }
-    .summary-row.total { font-size: 15px; font-weight: 700; color: #1a3a1a; margin-top: 8px; padding-top: 8px; border-top: 1px solid #a8d8a8; margin-bottom: 0; }
-    .note-label { font-size: 11px; color: #5a7a5a; margin-bottom: 5px; display: block; }
-    .note-input { width: 100%; border: 1px solid #a8d8a8; border-radius: 8px; padding: 8px 12px; font-size: 12px; color: #1a3a1a; background: #f0f7f0; resize: none; margin-bottom: 12px; outline: none; font-family: 'Noto Sans TC', sans-serif; }
-    .order-btn { width: 100%; background: linear-gradient(135deg, #2d6a2d, #4a9e4a); color: #fff; border: none; border-radius: 12px; padding: 14px; font-family: 'Noto Serif TC', serif; font-size: 15px; font-weight: 700; letter-spacing: 2px; cursor: pointer; box-shadow: 0 4px 12px rgba(45,106,45,0.3); }
-    .order-btn:disabled { opacity: 0.6; }
-    .sending-msg { text-align: center; font-size: 12px; color: #5a7a5a; margin-bottom: 8px; }
-    .success-overlay { position: fixed; inset: 0; background: rgba(26,58,26,0.85); z-index: 300; display: none; align-items: center; justify-content: center; }
-    .success-box { background: #fff; border-radius: 18px; padding: 36px 28px; text-align: center; max-width: 300px; width: 88%; }
-    .success-icon { font-size: 50px; margin-bottom: 12px; }
-    .success-title { font-family: 'Noto Serif TC', serif; font-size: 20px; font-weight: 700; color: #1a3a1a; margin-bottom: 6px; }
-    .success-msg { font-size: 13px; color: #5a7a5a; line-height: 1.6; margin-bottom: 20px; }
-    .success-btn { background: #2d6a2d; color: #c8f0a0; border: none; border-radius: 10px; padding: 10px 28px; font-size: 13px; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>如意樂活蔬食早午餐</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans TC',sans-serif;background:#f0f7f0;color:#1a3a1a;}
+.header{background:linear-gradient(135deg,#2d6a2d,#4a9e4a);color:#fff;padding:16px 20px 0;position:sticky;top:0;z-index:100;}
+.header-top{display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;}
+.brand{font-family:'Noto Serif TC',serif;font-size:18px;font-weight:700;}
+.brand span{color:#c8f0a0;}
+.cart-btn{background:#c8f0a0;border:none;border-radius:50px;padding:7px 14px;font-size:13px;font-weight:500;color:#1a3a1a;cursor:pointer;display:flex;align-items:center;gap:5px;}
+.cart-badge{background:#2d6a2d;color:#c8f0a0;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;}
+.header-sub{font-size:11px;color:#d4f0d4;padding-bottom:10px;}
+.cat-tabs{display:flex;gap:6px;padding:10px 0;overflow-x:auto;border-top:1px solid rgba(255,255,255,0.2);}
+.cat-tabs::-webkit-scrollbar{display:none;}
+.cat-tab{background:transparent;border:1px solid rgba(255,255,255,0.4);color:#d4f0d4;border-radius:20px;padding:4px 12px;font-size:11px;cursor:pointer;white-space:nowrap;}
+.cat-tab.active{background:#c8f0a0;border-color:#c8f0a0;color:#1a3a1a;font-weight:500;}
+.content{padding:12px 16px;max-width:600px;margin:0 auto;}
+.section-title{font-family:'Noto Serif TC',serif;font-size:15px;font-weight:700;color:#2d6a2d;margin:16px 0 10px;padding-bottom:6px;border-bottom:2px solid #a8d8a8;}
+.menu-grid{display:flex;flex-direction:column;gap:8px;margin-bottom:6px;}
+.menu-card{background:#fff;border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(45,106,45,0.08);border:1px solid #d4ecd4;position:relative;overflow:hidden;}
+.popular-badge{position:absolute;top:0;right:0;background:#4a9e4a;color:#fff;font-size:9px;font-weight:700;padding:2px 8px;border-radius:0 12px 0 8px;}
+.item-info{flex:1;}
+.item-name{font-size:14px;font-weight:500;color:#1a3a1a;margin-bottom:2px;}
+.item-desc{font-size:11px;color:#5a7a5a;line-height:1.3;}
+.item-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;margin-left:10px;}
+.item-price{font-family:'Noto Serif TC',serif;font-size:15px;font-weight:700;color:#2d6a2d;}
+.qty-control{display:flex;align-items:center;gap:6px;background:#f0f7f0;border-radius:20px;padding:2px;border:1px solid #a8d8a8;}
+.qty-btn{width:24px;height:24px;border-radius:50%;border:none;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;font-weight:700;}
+.qty-btn.minus{background:#d4ecd4;color:#2d6a2d;}
+.qty-btn.plus{background:#2d6a2d;color:#c8f0a0;}
+.qty-num{font-weight:600;font-size:13px;min-width:16px;text-align:center;}
+.add-btn{background:#2d6a2d;color:#c8f0a0;border:none;border-radius:20px;padding:5px 12px;font-size:12px;cursor:pointer;}
+.overlay{position:fixed;inset:0;background:rgba(26,58,26,0.5);z-index:200;display:none;}
+.cart-panel{position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:20px 20px 0 0;padding:18px 18px 30px;z-index:201;max-height:80vh;overflow-y:auto;display:none;}
+.cart-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #d4ecd4;}
+.cart-title{font-family:'Noto Serif TC',serif;font-size:17px;font-weight:700;color:#1a3a1a;}
+.close-btn{background:#d4ecd4;border:none;border-radius:50%;width:30px;height:30px;font-size:16px;cursor:pointer;color:#2d6a2d;}
+.cart-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #eaf4ea;}
+.cart-item-info{flex:1;}
+.cart-item-name{font-size:13px;font-weight:500;color:#1a3a1a;}
+.cart-item-price{font-size:11px;color:#4a9e4a;margin-top:2px;}
+.empty-cart{text-align:center;padding:36px 0;color:#5a7a5a;font-size:13px;}
+.cart-summary{background:#f0f7f0;border-radius:10px;padding:14px;margin:14px 0;}
+.summary-row{display:flex;justify-content:space-between;font-size:12px;color:#5a7a5a;margin-bottom:5px;}
+.summary-total{display:flex;justify-content:space-between;font-size:15px;font-weight:700;color:#1a3a1a;margin-top:8px;padding-top:8px;border-top:1px solid #a8d8a8;}
+.note-label{font-size:11px;color:#5a7a5a;margin-bottom:5px;display:block;}
+.note-input{width:100%;border:1px solid #a8d8a8;border-radius:8px;padding:8px 12px;font-size:12px;color:#1a3a1a;background:#f0f7f0;resize:none;margin-bottom:12px;outline:none;}
+.order-btn{width:100%;background:linear-gradient(135deg,#2d6a2d,#4a9e4a);color:#fff;border:none;border-radius:12px;padding:14px;font-family:'Noto Serif TC',serif;font-size:15px;font-weight:700;letter-spacing:2px;cursor:pointer;}
+.order-btn:disabled{opacity:0.6;}
+.sending-msg{text-align:center;font-size:12px;color:#5a7a5a;margin-bottom:8px;}
+.success-overlay{position:fixed;inset:0;background:rgba(26,58,26,0.85);z-index:300;display:none;align-items:center;justify-content:center;}
+.success-box{background:#fff;border-radius:18px;padding:36px 28px;text-align:center;max-width:300px;width:88%;}
+.success-icon{font-size:50px;margin-bottom:12px;}
+.success-title{font-family:'Noto Serif TC',serif;font-size:20px;font-weight:700;color:#1a3a1a;margin-bottom:6px;}
+.success-msg{font-size:13px;color:#5a7a5a;line-height:1.6;margin-bottom:20px;}
+.success-btn{background:#2d6a2d;color:#c8f0a0;border:none;border-radius:10px;padding:10px 28px;font-size:13px;cursor:pointer;}
+</style>
 </head>
 <body>
-
 <div class="header">
   <div class="header-top">
     <div class="brand">如意樂活<span>蔬食早午餐</span></div>
-    <button class="cart-btn" onclick="openCart()">
-      購物車 <span class="cart-badge" id="cart-count" style="display:none">0</span>
-    </button>
+    <button class="cart-btn" onclick="openCart()">購物車 <span class="cart-badge" id="cart-count" style="display:none">0</span></button>
   </div>
   <div class="header-sub">餐點全素・蛋奶素者都可以吃・現點現做</div>
   <div class="cat-tabs" id="cat-tabs"></div>
 </div>
-
 <div class="content" id="menu-content"></div>
-
 <div class="overlay" id="overlay" onclick="closeCart()"></div>
 <div class="cart-panel" id="cart-panel">
   <div class="cart-header">
@@ -85,8 +79,7 @@
   </div>
   <div id="cart-body"></div>
 </div>
-
-<div class="success-overlay" id="success-overlay" style="display:none">
+<div class="success-overlay" id="success-overlay">
   <div class="success-box">
     <div class="success-icon">&#x1F389;</div>
     <div class="success-title">訂單成立！</div>
@@ -94,173 +87,128 @@
     <button class="success-btn" onclick="closeSuccess()">繼續點餐</button>
   </div>
 </div>
-
 <script>
-var API_URL = "https://food-order-api-two.vercel.app/api/notify";
-
-var menuData = [
-  { category: "軟Q手工蛋餅", items: [
-    { id:1, name:"原味招牌蛋餅", price:28, desc:"每日新鮮手煎餅皮+自製醬料", popular:true },
-    { id:2, name:"玉米蛋餅", price:33, desc:"香甜玉米粒，口感豐富" },
-    { id:3, name:"紅蘿蔔蛋餅", price:35, desc:"健康蔬食，清甜爽口" },
-    { id:4, name:"塔香蛋餅", price:35, desc:"九層塔香氣四溢" },
-    { id:5, name:"青椒蛋餅", price:38, desc:"清脆青椒，清爽健康" },
-    { id:6, name:"起士蛋餅", price:38, desc:"濃郁起士，香氣滿溢", popular:true },
-    { id:7, name:"金針菇蛋餅", price:38, desc:"鮮嫩金針菇，口感Q彈" },
-    { id:8, name:"高麗菜蛋餅", price:40, desc:"新鮮高麗菜，清甜爽脆" },
-    { id:9, name:"馬鈴薯蛋餅", price:40, desc:"鬆軟馬鈴薯，飽足感十足" },
-    { id:10, name:"地瓜蛋餅", price:40, desc:"香甜地瓜，自然甜味" },
-    { id:11, name:"南瓜蛋餅", price:40, desc:"濃郁南瓜，營養豐富" },
-    { id:12, name:"總匯蛋餅", price:55, desc:"多種食材，豐盛美味", popular:true },
-  ]},
-  { category: "元氣吐司", items: [
-    { id:13, name:"玉米蛋吐司", price:35, desc:"內含生菜、黃瓜、蕃茄" },
-    { id:14, name:"水果吐司", price:35, desc:"新鮮水果，清爽美味" },
-    { id:15, name:"香煎馬鈴薯吐司", price:38, desc:"香煎馬鈴薯，鬆軟可口" },
-    { id:16, name:"香煎地瓜吐司", price:38, desc:"香甜地瓜，健康美味" },
-    { id:17, name:"歐姆起司蛋吐司", price:40, desc:"含起士，濃郁香滑", popular:true },
-    { id:18, name:"南瓜蛋吐司", price:48, desc:"南瓜內餡，營養滿分" },
-    { id:19, name:"馬鈴薯歐姆蛋吐司", price:55, desc:"含起士，豐盛飽足" },
-    { id:20, name:"地瓜歐姆蛋吐司", price:55, desc:"含起士，香甜濃郁" },
-    { id:21, name:"地瓜總匯吐司", price:65, desc:"含起士，多種食材", popular:true },
-    { id:22, name:"馬鈴薯總匯吐司", price:65, desc:"含起士，豐盛總匯" },
-  ]},
-  { category: "活力單點", items: [
-    { id:23, name:"花生吐司", price:20, desc:"香濃花生醬，經典美味" },
-    { id:24, name:"巧克力吐司", price:20, desc:"香甜巧克力，幸福滋味" },
-    { id:25, name:"芝麻吐司", price:25, desc:"香濃芝麻，營養豐富" },
-    { id:26, name:"香煎馬鈴薯片", price:35, desc:"香脆馬鈴薯，酥脆好吃" },
-    { id:27, name:"香煎地瓜片", price:35, desc:"香甜地瓜片，健康美味" },
-    { id:28, name:"厚蛋歐姆", price:38, desc:"含起士，厚實香滑", popular:true },
-  ]},
-  { category: "活力飲品", items: [
-    { id:29, name:"非基改豆漿", price:20, desc:"純正豆漿，香醇濃郁", popular:true },
-    { id:30, name:"錫蘭紅茶", price:20, desc:"清香紅茶，提神醒腦" },
-    { id:31, name:"豆漿紅茶", price:20, desc:"豆漿加紅茶，獨特風味" },
-    { id:32, name:"芝麻豆漿", price:25, desc:"芝麻豆漿，香濃順口" },
-  ]},
+var API="https://food-order-api-two.vercel.app/api/notify";
+var menu=[
+{cat:"軟Q手工蛋餅",items:[
+{id:1,name:"原味招牌蛋餅",price:28,desc:"每日新鮮手煎餅皮+自製醬料",hot:true},
+{id:2,name:"玉米蛋餅",price:33,desc:"香甜玉米粒，口感豐富"},
+{id:3,name:"紅蘿蔔蛋餅",price:35,desc:"健康蔬食，清甜爽口"},
+{id:4,name:"塔香蛋餅",price:35,desc:"九層塔香氣四溢"},
+{id:5,name:"青椒蛋餅",price:38,desc:"清脆青椒，清爽健康"},
+{id:6,name:"起士蛋餅",price:38,desc:"濃郁起士，香氣滿溢",hot:true},
+{id:7,name:"金針菇蛋餅",price:38,desc:"鮮嫩金針菇，口感Q彈"},
+{id:8,name:"高麗菜蛋餅",price:40,desc:"新鮮高麗菜，清甜爽脆"},
+{id:9,name:"馬鈴薯蛋餅",price:40,desc:"鬆軟馬鈴薯，飽足感十足"},
+{id:10,name:"地瓜蛋餅",price:40,desc:"香甜地瓜，自然甜味"},
+{id:11,name:"南瓜蛋餅",price:40,desc:"濃郁南瓜，營養豐富"},
+{id:12,name:"總匯蛋餅",price:55,desc:"多種食材，豐盛美味",hot:true}
+]},
+{cat:"元氣吐司",items:[
+{id:13,name:"玉米蛋吐司",price:35,desc:"內含生菜、黃瓜、蕃茄"},
+{id:14,name:"水果吐司",price:35,desc:"新鮮水果，清爽美味"},
+{id:15,name:"香煎馬鈴薯吐司",price:38,desc:"香煎馬鈴薯，鬆軟可口"},
+{id:16,name:"香煎地瓜吐司",price:38,desc:"香甜地瓜，健康美味"},
+{id:17,name:"歐姆起司蛋吐司",price:40,desc:"含起士，濃郁香滑",hot:true},
+{id:18,name:"南瓜蛋吐司",price:48,desc:"南瓜內餡，營養滿分"},
+{id:19,name:"馬鈴薯歐姆蛋吐司",price:55,desc:"含起士，豐盛飽足"},
+{id:20,name:"地瓜歐姆蛋吐司",price:55,desc:"含起士，香甜濃郁"},
+{id:21,name:"地瓜總匯吐司",price:65,desc:"含起士，多種食材",hot:true},
+{id:22,name:"馬鈴薯總匯吐司",price:65,desc:"含起士，豐盛總匯"}
+]},
+{cat:"活力單點",items:[
+{id:23,name:"花生吐司",price:20,desc:"香濃花生醬，經典美味"},
+{id:24,name:"巧克力吐司",price:20,desc:"香甜巧克力，幸福滋味"},
+{id:25,name:"芝麻吐司",price:25,desc:"香濃芝麻，營養豐富"},
+{id:26,name:"香煎馬鈴薯片",price:35,desc:"香脆馬鈴薯，酥脆好吃"},
+{id:27,name:"香煎地瓜片",price:35,desc:"香甜地瓜片，健康美味"},
+{id:28,name:"厚蛋歐姆",price:38,desc:"含起士，厚實香滑",hot:true}
+]},
+{cat:"活力飲品",items:[
+{id:29,name:"非基改豆漿",price:20,desc:"純正豆漿，香醇濃郁",hot:true},
+{id:30,name:"錫蘭紅茶",price:20,desc:"清香紅茶，提神醒腦"},
+{id:31,name:"豆漿紅茶",price:20,desc:"豆漿加紅茶，獨特風味"},
+{id:32,name:"芝麻豆漿",price:25,desc:"芝麻豆漿，香濃順口"}
+]}
 ];
-
-var itemMap = {};
-for (var s = 0; s < menuData.length; s++) {
-  for (var i = 0; i < menuData[s].items.length; i++) {
-    var item = menuData[s].items[i];
-    itemMap[item.id] = item;
-  }
+var imap={};
+for(var s=0;s<menu.length;s++)for(var i=0;i<menu[s].items.length;i++){var it=menu[s].items[i];imap[it.id]=it;}
+var cart={};
+var activeCat=null;
+function q(id){return cart[id]||0;}
+function add(id){cart[id]=(cart[id]||0)+1;render();}
+function rem(id){if(!cart[id])return;cart[id]--;if(cart[id]<=0)delete cart[id];render();}
+function setCat(c){activeCat=c;render();}
+function openCart(){document.getElementById("overlay").style.display="block";document.getElementById("cart-panel").style.display="block";renderCart();}
+function closeCart(){document.getElementById("overlay").style.display="none";document.getElementById("cart-panel").style.display="none";}
+function closeSuccess(){document.getElementById("success-overlay").style.display="none";}
+function render(){renderTabs();renderMenu();renderCount();}
+function renderTabs(){
+var h='<button class="cat-tab '+(activeCat===null?'active':'')+'" onclick="setCat(null)">全部</button>';
+for(var i=0;i<menu.length;i++){var c=menu[i].cat;h+='<button class="cat-tab '+(activeCat===c?'active':'')+'" onclick="setCat(\''+c+'\')">'+c+'</button>';}
+document.getElementById("cat-tabs").innerHTML=h;
 }
-
-var cart = {};
-var activeCategory = null;
-
-function getQty(id) { return cart[id] || 0; }
-function addItem(id) { cart[id] = (cart[id] || 0) + 1; render(); }
-function removeItem(id) { if (!cart[id]) return; cart[id]--; if (cart[id] <= 0) delete cart[id]; render(); }
-function setCategory(cat) { activeCategory = cat; render(); }
-
-function openCart() {
-  document.getElementById("overlay").style.display = "block";
-  document.getElementById("cart-panel").style.display = "block";
-  renderCart();
+function renderMenu(){
+var filtered=activeCat?menu.filter(function(s){return s.cat===activeCat;}):menu;
+var h="";
+for(var s=0;s<filtered.length;s++){
+var sec=filtered[s];
+h+='<div class="section-title">'+sec.cat+'</div><div class="menu-grid">';
+for(var i=0;i<sec.items.length;i++){
+var it=sec.items[i];var qt=q(it.id);
+h+='<div class="menu-card">';
+if(it.hot)h+='<div class="popular-badge">熱銷</div>';
+h+='<div class="item-info"><div class="item-name">'+it.name+'</div><div class="item-desc">'+it.desc+'</div></div>';
+h+='<div class="item-right"><div class="item-price">$'+it.price+'</div>';
+if(qt===0){h+='<button class="add-btn" onclick="add('+it.id+')">加入</button>';}
+else{h+='<div class="qty-control"><button class="qty-btn minus" onclick="rem('+it.id+')">-</button><span class="qty-num">'+qt+'</span><button class="qty-btn plus" onclick="add('+it.id+')">+</button></div>';}
+h+='</div></div>';
 }
-function closeCart() {
-  document.getElementById("overlay").style.display = "none";
-  document.getElementById("cart-panel").style.display = "none";
+h+='</div>';
 }
-function closeSuccess() {
-  document.getElementById("success-overlay").style.display = "none";
+document.getElementById("menu-content").innerHTML=h;
 }
-
-function render() { renderTabs(); renderMenu(); renderCartCount(); }
-
-function renderTabs() {
-  var html = '<button class="cat-tab ' + (!activeCategory ? 'active' : '') + '" onclick="setCategory(null)">全部</button>';
-  for (var i = 0; i < menuData.length; i++) {
-    var cat = menuData[i].category;
-    html += '<button class="cat-tab ' + (activeCategory === cat ? 'active' : '') + '" onclick="setCategory(\'' + cat + '\')">' + cat + '</button>';
-  }
-  document.getElementById("cat-tabs").innerHTML = html;
+function renderCount(){
+var t=0;for(var id in cart)t+=cart[id];
+var b=document.getElementById("cart-count");
+b.textContent=t;b.style.display=t>0?"inline-flex":"none";
 }
-
-function renderMenu() {
-  var filtered = activeCategory ? menuData.filter(function(s){ return s.category === activeCategory; }) : menuData;
-  var html = "";
-  for (var s = 0; s < filtered.length; s++) {
-    var section = filtered[s];
-    html += '<div class="section-title">' + section.category + '</div><div class="menu-grid">';
-    for (var i = 0; i < section.items.length; i++) {
-      var item = section.items[i];
-      var qty = getQty(item.id);
-      html += '<div class="menu-card">';
-      if (item.popular) html += '<div class="popular-badge">熱銷</div>';
-      html += '<div class="item-info"><div class="item-name">' + item.name + '</div><div class="item-desc">' + item.desc + '</div></div>';
-      html += '<div class="item-right"><div class="item-price">$' + item.price + '</div>';
-      if (qty === 0) {
-        html += '<button class="add-btn" onclick="addItem(' + item.id + ')">加入</button>';
-      } else {
-        html += '<div class="qty-control"><button class="qty-btn minus" onclick="removeItem(' + item.id + ')">-</button><span class="qty-num">' + qty + '</span><button class="qty-btn plus" onclick="addItem(' + item.id + ')">+</button></div>';
-      }
-      html += '</div></div>';
-    }
-    html += '</div>';
-  }
-  document.getElementById("menu-content").innerHTML = html;
+function renderCart(){
+var ids=Object.keys(cart).filter(function(id){return cart[id]>0;});
+var tc=0,tp=0;
+for(var i=0;i<ids.length;i++){tc+=cart[ids[i]];tp+=imap[ids[i]].price*cart[ids[i]];}
+if(ids.length===0){document.getElementById("cart-body").innerHTML='<div class="empty-cart">購物車是空的，快去選些美食吧！</div>';return;}
+var h="";
+for(var i=0;i<ids.length;i++){
+var id=ids[i];var it=imap[id];var qt=cart[id];
+h+='<div class="cart-item"><div class="cart-item-info"><div class="cart-item-name">'+it.name+'</div><div class="cart-item-price">$'+it.price+' x '+qt+'</div></div>';
+h+='<div class="qty-control"><button class="qty-btn minus" onclick="rem('+id+');renderCart()">-</button><span class="qty-num">'+qt+'</span><button class="qty-btn plus" onclick="add('+id+');renderCart()">+</button></div></div>';
 }
-
-function renderCartCount() {
-  var total = 0;
-  for (var id in cart) total += cart[id];
-  var badge = document.getElementById("cart-count");
-  badge.textContent = total;
-  badge.style.display = total > 0 ? "inline-flex" : "none";
+h+='<div class="cart-summary"><div class="summary-row"><span>品項數量</span><span>'+tc+' 件</span></div><div class="summary-row"><span>外帶/內用</span><span>請備註說明</span></div><div class="summary-total"><span>合計</span><span>$'+tp+'</span></div></div>';
+h+='<label class="note-label">備註（外帶/內用桌號/特殊需求）</label>';
+h+='<textarea class="note-input" id="note-input" rows="2" placeholder="例：外帶、內用3號桌、不加蛋..."></textarea>';
+h+='<div class="sending-msg" id="sending-msg" style="display:none">傳送中...</div>';
+h+='<button class="order-btn" id="order-btn" onclick="placeOrder()">立即下單</button>';
+document.getElementById("cart-body").innerHTML=h;
 }
-
-function renderCart() {
-  var ids = Object.keys(cart).filter(function(id){ return cart[id] > 0; });
-  var totalCount = 0, totalPrice = 0;
-  for (var i = 0; i < ids.length; i++) { totalCount += cart[ids[i]]; totalPrice += itemMap[ids[i]].price * cart[ids[i]]; }
-
-  if (ids.length === 0) {
-    document.getElementById("cart-body").innerHTML = '<div class="empty-cart"><div style="font-size:44px;margin-bottom:8px">&#x1F96C;</div>購物車是空的，快去選些美食吧！</div>';
-    return;
-  }
-
-  var html = "";
-  for (var i = 0; i < ids.length; i++) {
-    var id = ids[i]; var item = itemMap[id]; var qty = cart[id];
-    html += '<div class="cart-item"><div class="cart-item-info"><div class="cart-item-name">' + item.name + '</div><div class="cart-item-price">$' + item.price + ' x ' + qty + '</div></div>';
-    html += '<div class="qty-control"><button class="qty-btn minus" onclick="removeItem(' + id + ');renderCart()">-</button><span class="qty-num">' + qty + '</span><button class="qty-btn plus" onclick="addItem(' + id + ');renderCart()">+</button></div></div>';
-  }
-
-  html += '<div class="cart-summary"><div class="summary-row"><span>品項數量</span><span>' + totalCount + ' 件</span></div><div class="summary-row"><span>外帶/內用</span><span>請備註說明</span></div><div class="summary-row total"><span>合計</span><span>$' + totalPrice + '</span></div></div>';
-  html += '<label class="note-label">備註（外帶/內用桌號/特殊需求）</label>';
-  html += '<textarea class="note-input" id="note-input" rows="2" placeholder="例：外帶、內用3號桌、不加蛋..."></textarea>';
-
-html += ‘<div class="sending-msg" id="sending-msg" style="display:none">傳送中…</div>’;
-html += ‘<button class="order-btn" id="order-btn" onclick="placeOrder()">立即下單</button>’;
-document.getElementById(“cart-body”).innerHTML = html;
-}
-
-function placeOrder() {
-var ids = Object.keys(cart).filter(function(id){ return cart[id] > 0; });
-if (ids.length === 0) return;
-var items = ids.map(function(id){ return { id: Number(id), name: itemMap[id].name, price: itemMap[id].price, qty: cart[id] }; });
-var total = items.reduce(function(s, i){ return s + i.price * i.qty; }, 0);
-var noteEl = document.getElementById(“note-input”);
-var note = noteEl ? noteEl.value : “”;
-var orderId = Math.floor(Math.random() * 90000) + 10000;
-document.getElementById(“order-btn”).disabled = true;
-document.getElementById(“sending-msg”).style.display = “block”;
-fetch(API_URL, { method: “POST”, headers: { “Content-Type”: “application/json” }, body: JSON.stringify({ items: items, total: total, note: note, orderId: orderId }) })
-.catch(function(e){ console.error(e); })
+function placeOrder(){
+var ids=Object.keys(cart).filter(function(id){return cart[id]>0;});
+if(ids.length===0)return;
+var items=ids.map(function(id){return{id:Number(id),name:imap[id].name,price:imap[id].price,qty:cart[id]};});
+var total=items.reduce(function(s,i){return s+i.price*i.qty;},0);
+var note=document.getElementById("note-input")?document.getElementById("note-input").value:"";
+var oid=Math.floor(Math.random()*90000)+10000;
+document.getElementById("order-btn").disabled=true;
+document.getElementById("sending-msg").style.display="block";
+fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({items:items,total:total,note:note,orderId:oid})})
+.catch(function(e){console.error(e);})
 .finally(function(){
-cart = {}; closeCart(); renderCartCount();
-document.getElementById(“success-msg”).innerHTML = “感謝您的訂購！<br>訂單編號：#” + orderId + “<br>請稍候，我們盡快為您準備”;
-document.getElementById(“success-overlay”).style.display = “flex”;
+cart={};closeCart();renderCount();
+document.getElementById("success-msg").innerHTML="感謝您的訂購！<br>訂單編號：#"+oid+"<br>請稍候，我們盡快為您準備";
+document.getElementById("success-overlay").style.display="flex";
 });
 }
-
 render();
 </script>
-
 </body>
 </html>
