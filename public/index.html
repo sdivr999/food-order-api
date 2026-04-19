@@ -183,19 +183,18 @@ var addonOptions=[{label:"+蛋 13元",price:13,key:"egg"},{label:"+起司 10元"
 function loadMenu(){
   fetch(MENU_API).then(function(r){return r.json();}).then(function(d){
     if(!d.menu){
-      document.getElementById("menu-content").innerHTML='<div class="loading">資料錯誤：'+JSON.stringify(d)+'</div>';
+      document.getElementById("menu-content").innerHTML='<div class="loading">錯誤：'+JSON.stringify(d)+'</div>';
       return;
     }
     menu=d.menu;
-    menu.forEach(function(sec){
-      sec.items.sort(function(a,b){return a.price-b.price;});
-    });
+    menu.forEach(function(sec){sec.items.sort(function(a,b){return a.price-b.price;});});
     menuSha=d.sha;
     render();
   }).catch(function(e){
-    document.getElementById("menu-content").innerHTML='<div class="loading">載入失敗：'+e.message+'</div>';
+    document.getElementById("menu-content").innerHTML='<div class="loading">失敗：'+e.message+'</div>';
   });
 }
+
 
 function saveMenuToGithub(callback){
   fetch(MENU_API,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({menu:menu,sha:menuSha})})
