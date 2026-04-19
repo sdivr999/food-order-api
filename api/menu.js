@@ -10,7 +10,9 @@ export default async function handler(req, res) {
   const API = "https://api.github.com/repos/"+REPO+"/contents/"+FILE;
 
   if (req.method === "GET") {
-    const r = await fetch(API, { headers: { Authorization: "Bearer "+GITHUB_TOKEN, "User-Agent": "food-order-app" }});
+    const r = await fetch(API, {
+      headers: { Authorization: "Bearer "+GITHUB_TOKEN, "User-Agent": "food-order-app" }
+    });
     const d = await r.json();
     const content = JSON.parse(Buffer.from(d.content, "base64").toString("utf8"));
     return res.status(200).json({ menu: content, sha: d.sha });
