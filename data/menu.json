@@ -1,5 +1,5 @@
 [
-  {"cat":"軟Q手工蛋餅","hasSauce":true,"items":[
+  {"cat":"軟Q手工蛋餅","hasSauce":true,"hasAddons":true,"items":[
     {"id":1,"name":"原味招牌蛋餅","price":28,"desc":"每日新鮮手煎餅皮+自製醬料","hot":true},
     {"id":2,"name":"玉米蛋餅","price":33,"desc":"香甜玉米粒，口感豐富"},
     {"id":3,"name":"紅蘿蔔蛋餅","price":35,"desc":"健康蔬食，清甜爽口"},
@@ -13,7 +13,7 @@
     {"id":11,"name":"南瓜蛋餅","price":40,"desc":"濃郁南瓜，營養豐富"},
     {"id":12,"name":"總匯蛋餅","price":55,"desc":"多種食材，豐盛美味","hot":true}
   ]},
-  {"cat":"元氣吐司","items":[
+  {"cat":"元氣吐司","hasAddons":true,"items":[
     {"id":13,"name":"玉米蛋吐司","price":35,"desc":"內含生菜、黃瓜、蕃茄"},
     {"id":14,"name":"水果吐司","price":35,"desc":"新鮮水果，清爽美味"},
     {"id":15,"name":"香煎馬鈴薯吐司","price":38,"desc":"香煎馬鈴薯，鬆軟可口"},
@@ -35,6 +35,7 @@
   ]},
   {"cat":"活力飲品","items":[
     {"id":29,"name":"非基改豆漿","price":20,"desc":"純正豆漿，香醇濃郁","hot":true},
+    {"id":33,"name":"無糖豆漿","price":20,"desc":"純正無糖豆漿，清爽健康"},
     {"id":30,"name":"錫蘭紅茶","price":20,"desc":"清香紅茶，提神醒腦"},
     {"id":31,"name":"豆漿紅茶","price":20,"desc":"豆漿加紅茶，獨特風味"},
     {"id":32,"name":"芝麻豆漿","price":25,"desc":"芝麻豆漿，香濃順口"}
