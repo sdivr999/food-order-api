@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8"/>
@@ -394,41 +393,39 @@ function renderCart(){
   for(var i=0;i<times.length;i++)h+='<option>'+times[i]+'</option>';
   h+='</select><label class="field-label">聯絡電話</label><input class="field-input" id="phone-input" type="tel" placeholder="請輸入手機號碼"/>';
   h+='<label class="field-label">備註（外帶/內用桌號/特殊需求）</label><textarea class="note-input" id="note-input" rows="2" placeholder="例：外帶、內用3號桌..."></textarea>';
-
-h+=’<div class="saving-msg" id="sending-msg" style="display:none">傳送中…</div>’;
-h+=’<button class="order-btn" id="order-btn" onclick="placeOrder()">立即下單</button>’;
-document.getElementById(“cart-body”).innerHTML=h;
+  h+='<div class="saving-msg" id="sending-msg" style="display:none">傳送中...</div>';
+  h+='<button class="order-btn" id="order-btn" onclick="placeOrder()">立即下單</button>';
+  document.getElementById("cart-body").innerHTML=h;
 }
 
 function placeOrder(){
-var imap=buildImap();
-var ids=Object.keys(cart).filter(function(id){return cart[id]>0;});
-if(ids.length===0)return;
-var phone=document.getElementById(“phone-input”).value.trim();
-if(!phone){alert(“請填寫聯絡電話！”);return;}
-var pickup=document.getElementById(“pickup-time”).value;
-if(!pickup){alert(“請選擇取餐時間！”);return;}
-var items=ids.map(function(id){
-var it={id:Number(id),name:imap[id].name,price:imap[id].price,qty:cart[id]};
-if(sauce[id])it.sauce=sauce[id];
-var al=getAddonLabel(id);if(al)it.addons=al;
-var ap=getAddonPrice(id);if(ap)it.addonPrice=ap;
-return it;
-});
-var total=items.reduce(function(s,i){return s+(i.price+(i.addonPrice||0))*i.qty;},0);
-var note=document.getElementById(“note-input”).value;
-var oid=String(orderCounter).padStart(3,“0”);orderCounter++;
-document.getElementById(“order-btn”).disabled=true;document.getElementById(“sending-msg”).style.display=“block”;
-fetch(NOTIFY_API,{method:“POST”,headers:{“Content-Type”:“application/json”},body:JSON.stringify({items:items,total:total,note:note,orderId:oid,phone:phone,pickup:pickup})})
-.catch(function(e){console.error(e);})
-.finally(function(){
-cart={};sauce={};addons={};closePanel();renderCount();
-document.getElementById(“success-msg”).innerHTML=“感謝您的訂購！<br>訂單編號：#”+oid+”<br>取餐時間：”+pickup+”<br>請稍候，我們盡快為您準備”;
-document.getElementById(“success-overlay”).style.display=“flex”;
-});
+  var imap=buildImap();
+  var ids=Object.keys(cart).filter(function(id){return cart[id]>0;});
+  if(ids.length===0)return;
+  var phone=document.getElementById("phone-input").value.trim();
+  if(!phone){alert("請填寫聯絡電話！");return;}
+  var pickup=document.getElementById("pickup-time").value;
+  if(!pickup){alert("請選擇取餐時間！");return;}
+  var items=ids.map(function(id){
+    var it={id:Number(id),name:imap[id].name,price:imap[id].price,qty:cart[id]};
+    if(sauce[id])it.sauce=sauce[id];
+    var al=getAddonLabel(id);if(al)it.addons=al;
+    var ap=getAddonPrice(id);if(ap)it.addonPrice=ap;
+    return it;
+  });
+  var total=items.reduce(function(s,i){return s+(i.price+(i.addonPrice||0))*i.qty;},0);
+  var note=document.getElementById("note-input").value;
+  var oid=String(orderCounter).padStart(3,"0");orderCounter++;
+  document.getElementById("order-btn").disabled=true;document.getElementById("sending-msg").style.display="block";
+  fetch(NOTIFY_API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({items:items,total:total,note:note,orderId:oid,phone:phone,pickup:pickup})})
+  .catch(function(e){console.error(e);})
+  .finally(function(){
+    cart={};sauce={};addons={};closePanel();renderCount();
+    document.getElementById("success-msg").innerHTML="感謝您的訂購！<br>訂單編號：#"+oid+"<br>取餐時間："+pickup+"<br>請稍候，我們盡快為您準備";
+    document.getElementById("success-overlay").style.display="flex";
+  });
 }
 loadMenu();
 </script>
-
 </body>
 </html>
