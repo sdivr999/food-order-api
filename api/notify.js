@@ -6,7 +6,13 @@ export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   const { items, total, note, orderId, phone, pickup } = req.body;
-  const itemList = items.map(i => `• ${i.name}${i.sauce ? "（"+i.sauce+"）" : ""} × ${i.qty}（$${i.price * i.qty}）`).join("\n");
+  const itemList = items.map(i => {
+    var line = "• " + i.name;
+    if (i.sauce) line += "（" + i.sauce + "）";
+    if (i.addons) line += "（加購：" + i.addons + "）";
+    line += " × " + i.qty + "（$" + ((i.price + (i.addonPrice||0)) * i.qty) + "）";
+    return line;
+  }).join("\n");
   const message = `🔔 新訂單通知！\n\n📋 訂單編號：#${orderId}\n📞 聯絡電話：${phone || "未填寫"}\n⏰ 取餐時間：${pickup || "未選擇"}\n${"─".repeat(20)}\n${itemList}\n${"─".repeat(20)}\n💰 合計：$${total}${note ? `\n📝 備註：${note}` : ""}\n\n請盡快確認！`;
 
   try {
