@@ -12,12 +12,12 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f0f7f0;color:#1a3a1a;}
 .header{background:#5aaa4a;position:sticky;top:0;z-index:100;}
 .header-banner{width:100%;display:block;cursor:pointer;max-height:110px;object-fit:cover;object-position:center;}
 .header-bottom{background:#5aaa4a;padding:6px 16px;display:flex;justify-content:space-between;align-items:center;}
-.header-sub{font-size:10px;color:#d4f0d4;}
+.header-sub{font-size:10px;color:#e8f8e8;}
 .cart-btn{background:#c8f0a0;border:none;border-radius:50px;padding:7px 14px;font-size:13px;font-weight:500;color:#1a3a1a;cursor:pointer;display:flex;align-items:center;gap:5px;flex-shrink:0;}
 .cart-badge{background:#2d6a2d;color:#c8f0a0;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;}
 .cat-tabs{display:flex;gap:6px;padding:8px 16px;overflow-x:auto;background:#5aaa4a;border-top:1px solid rgba(255,255,255,0.2);}
 .cat-tabs::-webkit-scrollbar{display:none;}
-.cat-tab{background:transparent;border:1px solid rgba(255,255,255,0.4);color:#d4f0d4;border-radius:20px;padding:4px 12px;font-size:11px;cursor:pointer;white-space:nowrap;}
+.cat-tab{background:transparent;border:1px solid rgba(255,255,255,0.5);color:#e8f8e8;border-radius:20px;padding:4px 12px;font-size:11px;cursor:pointer;white-space:nowrap;}
 .cat-tab.active{background:#c8f0a0;border-color:#c8f0a0;color:#1a3a1a;font-weight:500;}
 .admin-bar{background:#fff3cd;padding:8px 16px;font-size:12px;color:#856404;display:flex;justify-content:space-between;align-items:center;gap:8px;}
 .admin-bar button{background:#856404;color:#fff;border:none;border-radius:8px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap;}
@@ -91,7 +91,6 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f0f7f0;color:#1a3a1a;}
 .pwd-btn{background:#2d6a2d;color:#fff;border:none;border-radius:10px;padding:10px 28px;font-size:13px;cursor:pointer;margin-right:8px;}
 .pwd-cancel{background:#ddd;color:#555;border:none;border-radius:10px;padding:10px 20px;font-size:13px;cursor:pointer;}
 .pwd-error{color:#e53e3e;font-size:12px;margin-top:8px;}
-.loading{text-align:center;padding:40px;color:#5a7a5a;font-size:14px;}
 </style>
 </head>
 <body>
@@ -103,15 +102,15 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f0f7f0;color:#1a3a1a;}
   </div>
   <div class="cat-tabs" id="cat-tabs"></div>
 </div>
-</div>
 <div id="admin-bar" style="display:none" class="admin-bar">
   <span>&#9881; 管理模式</span>
   <div style="display:flex;gap:6px">
     <button onclick="openAddCat()">新增分類</button>
+    <button onclick="saveMenuToGithub(function(){alert('已儲存！');})">儲存到雲端</button>
     <button onclick="exitAdmin()">離開</button>
   </div>
 </div>
-<div class="content" id="menu-content"><div class="loading">載入中...</div></div>
+<div class="content" id="menu-content"></div>
 
 <div class="overlay" id="overlay" onclick="closePanel()"></div>
 <div class="panel" id="cart-panel">
@@ -127,7 +126,6 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f0f7f0;color:#1a3a1a;}
   <label class="field-label">描述</label>
   <input class="field-input" id="new-desc" placeholder="例：濃郁起士，香氣滿溢"/>
   <div class="checkbox-row"><input type="checkbox" id="new-hot"/><label for="new-hot">標記為熱銷</label></div>
-  <div class="saving-msg" id="save-item-msg" style="display:none">儲存中...</div>
   <button class="confirm-btn" onclick="saveNewItem()">新增</button>
   <button class="cancel-btn" onclick="closePanel()">取消</button>
 </div>
@@ -135,12 +133,10 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f0f7f0;color:#1a3a1a;}
   <div class="panel-header"><div class="panel-title">新增分類</div><button class="close-btn" onclick="closePanel()">X</button></div>
   <label class="field-label">分類名稱</label>
   <input class="field-input" id="new-cat-name" placeholder="例：特餐"/>
-  <div class="checkbox-row"><input type="checkbox" id="new-cat-sauce"/><label for="new-cat-sauce">此分類有醬料選項（蛋餅類）</label></div>
-  <div class="saving-msg" id="save-cat-msg" style="display:none">儲存中...</div>
+  <div class="checkbox-row"><input type="checkbox" id="new-cat-sauce"/><label for="new-cat-sauce">此分類有醬料選項</label></div>
   <button class="confirm-btn" onclick="saveNewCat()">新增分類</button>
   <button class="cancel-btn" onclick="closePanel()">取消</button>
 </div>
-
 <div class="success-overlay" id="success-overlay">
   <div class="success-box">
     <div class="success-icon">&#x1F389;</div>
@@ -170,7 +166,6 @@ var isAdmin=false;
 var addingToCat=null;
 var adminClickCount=0;
 var adminClickTimer=null;
-var menu=[];
 var menuSha="";
 var soldOut={};
 var cart={};
@@ -180,26 +175,63 @@ var activeCat=null;
 var sauceOptions=["自製醬油","自製番茄醬","不要醬"];
 var addonOptions=[{label:"+蛋 13元",price:13,key:"egg"},{label:"+起司 10元",price:10,key:"cheese"}];
 
+var menu=[
+  {cat:"軟Q手工蛋餅",hasSauce:true,hasAddons:true,items:[
+    {id:1,name:"原味招牌蛋餅",price:28,desc:"每日新鮮手煎餅皮+自製醬料",hot:true},
+    {id:2,name:"玉米蛋餅",price:33,desc:"香甜玉米粒，口感豐富"},
+    {id:3,name:"紅蘿蔔蛋餅",price:35,desc:"健康蔬食，清甜爽口"},
+    {id:4,name:"塔香蛋餅",price:35,desc:"九層塔香氣四溢"},
+    {id:5,name:"青椒蛋餅",price:38,desc:"清脆青椒，清爽健康"},
+    {id:6,name:"起士蛋餅",price:38,desc:"濃郁起士，香氣滿溢",hot:true},
+    {id:7,name:"金針菇蛋餅",price:38,desc:"鮮嫩金針菇，口感Q彈"},
+    {id:8,name:"高麗菜蛋餅",price:40,desc:"新鮮高麗菜，清甜爽脆"},
+    {id:9,name:"馬鈴薯蛋餅",price:40,desc:"鬆軟馬鈴薯，飽足感十足"},
+    {id:10,name:"地瓜蛋餅",price:40,desc:"香甜地瓜，自然甜味"},
+    {id:11,name:"南瓜蛋餅",price:40,desc:"濃郁南瓜，營養豐富"},
+    {id:12,name:"總匯蛋餅",price:55,desc:"多種食材，豐盛美味",hot:true}
+  ]},
+  {cat:"元氣吐司",hasAddons:true,items:[
+    {id:13,name:"玉米蛋吐司",price:35,desc:"內含生菜、黃瓜、蕃茄"},
+    {id:14,name:"水果吐司",price:35,desc:"新鮮水果，清爽美味"},
+    {id:15,name:"香煎馬鈴薯吐司",price:38,desc:"香煎馬鈴薯，鬆軟可口"},
+    {id:16,name:"香煎地瓜吐司",price:38,desc:"香甜地瓜，健康美味"},
+    {id:17,name:"歐姆起司蛋吐司",price:40,desc:"含起士，濃郁香滑",hot:true},
+    {id:18,name:"南瓜蛋吐司",price:48,desc:"南瓜內餡，營養滿分"},
+    {id:19,name:"馬鈴薯歐姆蛋吐司",price:55,desc:"含起士，豐盛飽足"},
+    {id:20,name:"地瓜歐姆蛋吐司",price:55,desc:"含起士，香甜濃郁"},
+    {id:21,name:"地瓜總匯吐司",price:65,desc:"含起士，多種食材",hot:true},
+    {id:22,name:"馬鈴薯總匯吐司",price:65,desc:"含起士，豐盛總匯"}
+  ]},
+  {cat:"活力單點",items:[
+    {id:23,name:"花生吐司",price:20,desc:"香濃花生醬，經典美味"},
+    {id:24,name:"巧克力吐司",price:20,desc:"香甜巧克力，幸福滋味"},
+    {id:25,name:"芝麻吐司",price:25,desc:"香濃芝麻，營養豐富"},
+    {id:26,name:"香煎馬鈴薯片",price:35,desc:"香脆馬鈴薯，酥脆好吃"},
+    {id:27,name:"香煎地瓜片",price:35,desc:"香甜地瓜片，健康美味"},
+    {id:28,name:"厚蛋歐姆",price:38,desc:"含起士，厚實香滑",hot:true}
+  ]},
+  {cat:"活力飲品",items:[
+    {id:29,name:"非基改豆漿",price:20,desc:"純正豆漿，香醇濃郁",hot:true},
+    {id:33,name:"無糖豆漿",price:20,desc:"純正無糖豆漿，清爽健康"},
+    {id:30,name:"錫蘭紅茶",price:20,desc:"清香紅茶，提神醒腦"},
+    {id:31,name:"豆漿紅茶",price:20,desc:"豆漿加紅茶，獨特風味"},
+    {id:32,name:"芝麻豆漿",price:25,desc:"芝麻豆漿，香濃順口"}
+  ]}
+];
+
+// 嘗試從 GitHub 載入最新菜單（背景同步）
 function loadMenu(){
   fetch(MENU_API).then(function(r){return r.json();}).then(function(d){
-    if(!d.menu){
-      document.getElementById("menu-content").innerHTML='<div class="loading">錯誤：'+JSON.stringify(d)+'</div>';
-      return;
-    }
-    menu=d.menu;
-    menu.forEach(function(sec){sec.items.sort(function(a,b){return a.price-b.price;});});
-    menuSha=d.sha;
-    render();
-  }).catch(function(e){
-    document.getElementById("menu-content").innerHTML='<div class="loading">失敗：'+e.message+'</div>';
-  });
+    if(d.menu&&d.menu.length>0){menu=d.menu;menuSha=d.sha;render();}
+  }).catch(function(){});
+  render();
 }
 
-
 function saveMenuToGithub(callback){
+  if(!menuSha){alert("請先重新整理頁面再儲存！");return;}
   fetch(MENU_API,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({menu:menu,sha:menuSha})})
   .then(function(r){return r.json();}).then(function(d){if(d.sha)menuSha=d.sha;if(callback)callback();})
-  .catch(function(e){console.error(e);alert("儲存失敗！");});
+  .catch(function(){alert("儲存失敗！");});
 }
 
 function nextId(){
@@ -230,46 +262,42 @@ function closePwd(){document.getElementById("pwd-overlay").style.display="none";
 function exitAdmin(){isAdmin=false;document.getElementById("admin-bar").style.display="none";render();}
 
 function toggleSoldOut(id){soldOut[id]=!soldOut[id];if(soldOut[id]&&cart[id]){delete cart[id];delete sauce[id];delete addons[id];}render();}
-function deleteItem(catIndex,id){
-  if(!confirm("確定要刪除這個品項？"))return;
-  menu[catIndex].items=menu[catIndex].items.filter(function(it){return it.id!==id;});
-  saveMenuToGithub(function(){render();});
+function deleteItem(ci,id){
+  if(!confirm("確定刪除？"))return;
+  menu[ci].items=menu[ci].items.filter(function(it){return it.id!==id;});
+  render();
 }
-function deleteCat(catIndex){
-  if(!confirm("確定要刪除整個分類？"))return;
-  menu.splice(catIndex,1);saveMenuToGithub(function(){render();});
+function deleteCat(ci){
+  if(!confirm("確定刪除整個分類？"))return;
+  menu.splice(ci,1);render();
 }
-function openAddItem(catIndex){
-  addingToCat=catIndex;
+function openAddItem(ci){
+  addingToCat=ci;
   document.getElementById("new-name").value="";document.getElementById("new-price").value="";
   document.getElementById("new-desc").value="";document.getElementById("new-hot").checked=false;
-  document.getElementById("add-item-title").textContent="新增品項 - "+menu[catIndex].cat;
-  document.getElementById("save-item-msg").style.display="none";showPanel("add-item-panel");
+  document.getElementById("add-item-title").textContent="新增品項 - "+menu[ci].cat;
+  showPanel("add-item-panel");
 }
 function saveNewItem(){
   var name=document.getElementById("new-name").value.trim();
   var price=parseInt(document.getElementById("new-price").value);
-  var desc=document.getElementById("new-desc").value.trim();
-  var hot=document.getElementById("new-hot").checked;
   if(!name||!price){alert("請填寫名稱和價格！");return;}
-  var item={id:nextId(),name:name,price:price,desc:desc||""};
-  if(hot)item.hot=true;
+  var item={id:nextId(),name:name,price:price,desc:document.getElementById("new-desc").value.trim()};
+  if(document.getElementById("new-hot").checked)item.hot=true;
   menu[addingToCat].items.push(item);
   menu[addingToCat].items.sort(function(a,b){return a.price-b.price;});
-  document.getElementById("save-item-msg").style.display="block";
-  saveMenuToGithub(function(){document.getElementById("save-item-msg").style.display="none";closePanel();render();});
+  closePanel();render();
 }
 function openAddCat(){
   document.getElementById("new-cat-name").value="";document.getElementById("new-cat-sauce").checked=false;
-  document.getElementById("save-cat-msg").style.display="none";showPanel("add-cat-panel");
+  showPanel("add-cat-panel");
 }
 function saveNewCat(){
   var name=document.getElementById("new-cat-name").value.trim();
   if(!name){alert("請填寫分類名稱！");return;}
   var cat={cat:name,items:[]};
   if(document.getElementById("new-cat-sauce").checked)cat.hasSauce=true;
-  menu.push(cat);document.getElementById("save-cat-msg").style.display="block";
-  saveMenuToGithub(function(){document.getElementById("save-cat-msg").style.display="none";closePanel();render();});
+  menu.push(cat);closePanel();render();
 }
 
 function q(id){return cart[id]||0;}
@@ -278,13 +306,11 @@ function rem(id){if(!cart[id])return;cart[id]--;if(cart[id]<=0){delete cart[id];
 function setSauce(id,s){sauce[id]=s;renderMenu();}
 function toggleAddon(id,key){if(!addons[id])addons[id]={};addons[id][key]=!addons[id][key];renderMenu();}
 function setCat(c){activeCat=c;render();}
-
 function showPanel(id){document.getElementById("overlay").style.display="block";document.getElementById(id).style.display="block";}
 function openCart(){showPanel("cart-panel");renderCart();}
 function closePanel(){
   document.getElementById("overlay").style.display="none";
-  var panels=["cart-panel","add-item-panel","add-cat-panel"];
-  for(var i=0;i<panels.length;i++)document.getElementById(panels[i]).style.display="none";
+  ["cart-panel","add-item-panel","add-cat-panel"].forEach(function(id){document.getElementById(id).style.display="none";});
 }
 function closeSuccess(){document.getElementById("success-overlay").style.display="none";}
 function render(){renderTabs();renderMenu();renderCount();}
@@ -299,15 +325,14 @@ function renderMenu(){
   var filtered=activeCat?menu.filter(function(s){return s.cat===activeCat;}):menu;
   var h="";
   for(var si=0;si<filtered.length;si++){
-    var sec=filtered[si];var catIndex=menu.indexOf(sec);
+    var sec=filtered[si];var ci=menu.indexOf(sec);
     h+='<div class="section-title">'+sec.cat;
-    if(isAdmin){h+='<div style="display:flex;gap:4px"><button class="add-item-btn" onclick="openAddItem('+catIndex+')">+ 新增</button><button class="del-cat-btn" onclick="deleteCat('+catIndex+')">刪除分類</button></div>';}
+    if(isAdmin){h+='<div style="display:flex;gap:4px"><button class="add-item-btn" onclick="openAddItem('+ci+')">+ 新增</button><button class="del-cat-btn" onclick="deleteCat('+ci+')">刪除</button></div>';}
     h+='</div><div class="menu-grid">';
     for(var i=0;i<sec.items.length;i++){
       var it=sec.items[i];var qt=q(it.id);var so=soldOut[it.id];
       h+='<div class="menu-card'+(so?' sold-out':'')+'">';
-      if(so){h+='<div class="sold-out-badge">售完</div>';}
-      else if(it.hot){h+='<div class="popular-badge">熱銷</div>';}
+      if(so){h+='<div class="sold-out-badge">售完</div>';}else if(it.hot){h+='<div class="popular-badge">熱銷</div>';}
       h+='<div class="card-top"><div class="item-info"><div class="item-name'+(so?' faded':'')+'">'+it.name+'</div><div class="item-desc">'+it.desc+'</div></div>';
       h+='<div class="item-right"><div class="item-price'+(so?' faded':'')+'">$'+it.price+'</div>';
       if(!isAdmin){
@@ -316,14 +341,11 @@ function renderMenu(){
         else{h+='<div class="qty-control"><button class="qty-btn minus" onclick="rem('+it.id+')">-</button><span class="qty-num">'+qt+'</span><button class="qty-btn plus" onclick="add('+it.id+')">+</button></div>';}
       }
       h+='</div></div>';
-      if(isAdmin){h+='<div class="admin-actions">';if(so){h+='<button class="btn-uso" onclick="toggleSoldOut('+it.id+')">恢復供應</button>';}else{h+='<button class="btn-so" onclick="toggleSoldOut('+it.id+')">標記售完</button>';}h+='<button class="btn-del" onclick="deleteItem('+catIndex+','+it.id+')">刪除品項</button></div>';}
+      if(isAdmin){h+='<div class="admin-actions"><button class="btn-so'+(so?' btn-uso':'')+'" onclick="toggleSoldOut('+it.id+')">'+(so?'恢復供應':'標記售完')+'</button><button class="btn-del" onclick="deleteItem('+ci+','+it.id+')">刪除</button></div>';}
       if(qt>0&&!so&&!isAdmin){
         if(sec.hasAddons){
           h+='<div class="addon-row">';
-          for(var k=0;k<addonOptions.length;k++){
-            var ao=addonOptions[k];var sel=(addons[it.id]&&addons[it.id][ao.key])?'selected':'';
-            h+='<button class="addon-btn '+sel+'" onclick="toggleAddon('+it.id+',\''+ao.key+'\')">'+ao.label+'</button>';
-          }
+          for(var k=0;k<addonOptions.length;k++){var ao=addonOptions[k];h+='<button class="addon-btn '+(addons[it.id]&&addons[it.id][ao.key]?'selected':'')+'" onclick="toggleAddon('+it.id+',\''+ao.key+'\')">'+ao.label+'</button>';}
           h+='</div>';
         }
         if(sec.hasSauce){
@@ -347,37 +369,22 @@ function renderCount(){
 function buildImap(){
   var m={};for(var s=0;s<menu.length;s++)for(var i=0;i<menu[s].items.length;i++){var it=menu[s].items[i];m[it.id]=it;}return m;
 }
-
-function getAddonPrice(id){
-  if(!addons[id])return 0;
-  var total=0;
-  for(var k=0;k<addonOptions.length;k++){if(addons[id][addonOptions[k].key])total+=addonOptions[k].price;}
-  return total;
-}
-function getAddonLabel(id){
-  if(!addons[id])return "";
-  var labels=[];
-  for(var k=0;k<addonOptions.length;k++){if(addons[id][addonOptions[k].key])labels.push(addonOptions[k].label);}
-  return labels.join("、");
-}
+function getAddonPrice(id){if(!addons[id])return 0;var t=0;for(var k=0;k<addonOptions.length;k++){if(addons[id][addonOptions[k].key])t+=addonOptions[k].price;}return t;}
+function getAddonLabel(id){if(!addons[id])return "";var l=[];for(var k=0;k<addonOptions.length;k++){if(addons[id][addonOptions[k].key])l.push(addonOptions[k].label);}return l.join("、");}
 
 function renderCart(){
   var imap=buildImap();
   var ids=Object.keys(cart).filter(function(id){return cart[id]>0;});
   var tc=0,tp=0;
-  for(var i=0;i<ids.length;i++){
-    tc+=cart[ids[i]];
-    tp+=(imap[ids[i]].price+getAddonPrice(ids[i]))*cart[ids[i]];
-  }
+  for(var i=0;i<ids.length;i++){tc+=cart[ids[i]];tp+=(imap[ids[i]].price+getAddonPrice(ids[i]))*cart[ids[i]];}
   if(ids.length===0){document.getElementById("cart-body").innerHTML='<div class="empty-cart">購物車是空的，快去選些美食吧！</div>';return;}
   var h="";
   for(var i=0;i<ids.length;i++){
-    var id=ids[i];var it=imap[id];var qt=cart[id];
-    var unitPrice=it.price+getAddonPrice(id);
+    var id=ids[i];var it=imap[id];var qt=cart[id];var up=it.price+getAddonPrice(id);
     h+='<div class="cart-item"><div class="cart-item-info"><div class="cart-item-name">'+it.name+'</div>';
     if(sauce[id])h+='<div class="cart-item-sub">醬料：'+sauce[id]+'</div>';
     var al=getAddonLabel(id);if(al)h+='<div class="cart-item-sub">加購：'+al+'</div>';
-    h+='<div class="cart-item-sub">$'+unitPrice+' x '+qt+'</div></div>';
+    h+='<div class="cart-item-sub">$'+up+' x '+qt+'</div></div>';
     h+='<div class="qty-control"><button class="qty-btn minus" onclick="rem('+id+');renderCart()">-</button><span class="qty-num">'+qt+'</span><button class="qty-btn plus" onclick="add('+id+');renderCart()">+</button></div></div>';
   }
   h+='<div class="cart-summary"><div class="summary-row"><span>品項數量</span><span>'+tc+' 件</span></div><div class="summary-total"><span>合計</span><span>$'+tp+'</span></div></div>';
@@ -385,8 +392,7 @@ function renderCart(){
   for(var m2=0;m2<8;m2++){var t2=start+m2*15;var hh=Math.floor(t2/60)%24;var mm=t2%60;times.push((hh<10?"0":"")+hh+":"+(mm<10?"0":"")+mm);}
   h+='<label class="field-label">取餐時間</label><select class="time-select" id="pickup-time"><option value="">請選擇取餐時間</option>';
   for(var i=0;i<times.length;i++)h+='<option>'+times[i]+'</option>';
-  h+='</select>';
-  h+='<label class="field-label">聯絡電話</label><input class="field-input" id="phone-input" type="tel" placeholder="請輸入手機號碼"/>';
+  h+='</select><label class="field-label">聯絡電話</label><input class="field-input" id="phone-input" type="tel" placeholder="請輸入手機號碼"/>';
   h+='<label class="field-label">備註（外帶/內用桌號/特殊需求）</label><textarea class="note-input" id="note-input" rows="2" placeholder="例：外帶、內用3號桌..."></textarea>';
 
 h+=’<div class="saving-msg" id="sending-msg" style="display:none">傳送中…</div>’;
