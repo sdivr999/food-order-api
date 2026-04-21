@@ -229,12 +229,35 @@ var menu=[
   ]}
 ];
 
-// 嘗試從 GitHub 載入最新菜單（背景同步）
+// 建立 id -> emoji/customImg 對照表（永遠保留圖片資訊）
+function buildEmojiMap(){
+  var map={};
+  for(var s=0;s<menu.length;s++)for(var i=0;i<menu[s].items.length;i++){
+    var it=menu[s].items[i];
+    map[it.id]={emoji:it.emoji,customImg:it.customImg};
+  }
+  return map;
+}
+
+// 嘗試從 GitHub 載入最新菜單（背景同步，保留圖片資訊）
 function loadMenu(){
-  fetch(MENU_API).then(function(r){return r.json();}).then(function(d){
-    if(d.menu&&d.menu.length>0){menu=d.menu;menuSha=d.sha;render();}
-  }).catch(function(){});
   render();
+  fetch(MENU_API).then(function(r){return r.json();}).then(function(d){
+    if(d.menu&&d.menu.length>0){
+      var emojiMap=buildEmojiMap();
+      // 合併 GitHub 菜單與本地圖片資訊
+      for(var s=0;s<d.menu.length;s++){
+        for(var i=0;i<d.menu[s].items.length;i++){
+          var id=d.menu[s].items[i].id;
+          if(emojiMap[id]){
+            if(emojiMap[id].emoji)d.menu[s].items[i].emoji=emojiMap[id].emoji;
+            if(emojiMap[id].customImg)d.menu[s].items[i].customImg=emojiMap[id].customImg;
+          }
+        }
+      }
+      menu=d.menu;menuSha=d.sha;render();
+    }
+  }).catch(function(){});
 }
 
 function saveMenuToGithub(callback){
