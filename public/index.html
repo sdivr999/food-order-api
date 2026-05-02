@@ -183,47 +183,48 @@ var sauce={};
 var addons={};
 var activeCat=null;
 var sauceOptions=["自製醬油","自製番茄醬","不要醬"];
-var addonOptions=[{label:"+蛋 13元",price:13,key:"egg"},{label:"+起司 10元",price:10,key:"cheese"}];
+var addonOptions=[{label:"+起士 10元",price:10,key:"cheese"},{label:"+蛋 15元",price:15,key:"egg"}];
+var addonOptionsEggCrepe=[{label:"+起士 10元",price:10,key:"cheese"}];
 
 var menu=[
   {cat:"軟Q手工蛋餅",hasSauce:true,hasAddons:true,items:[
-    {id:1,name:"原味招牌蛋餅",price:28,desc:"每日新鮮手煎餅皮+自製醬料",hot:true,emoji:"🍳"},
-    {id:2,name:"玉米蛋餅",price:33,desc:"香甜玉米粒，口感豐富",emoji:"🌽"},
-    {id:3,name:"紅蘿蔔蛋餅",price:35,desc:"健康蔬食，清甜爽口",emoji:"🥕"},
-    {id:4,name:"塔香蛋餅",price:35,desc:"九層塔香氣四溢",customImg:"BASIL"},
-    {id:5,name:"青椒蛋餅",price:38,desc:"清脆青椒，清爽健康",emoji:"🫑"},
-    {id:6,name:"起士蛋餅",price:38,desc:"濃郁起士，香氣滿溢",hot:true,emoji:"🧀"},
-    {id:7,name:"金針菇蛋餅",price:38,desc:"鮮嫩金針菇，口感Q彈",customImg:"ENOKI"},
-    {id:8,name:"高麗菜蛋餅",price:40,desc:"新鮮高麗菜，清甜爽脆",customImg:"CABBAGE"},
-    {id:9,name:"馬鈴薯蛋餅",price:40,desc:"鬆軟馬鈴薯，飽足感十足",emoji:"🥔"},
-    {id:10,name:"地瓜蛋餅",price:40,desc:"香甜地瓜，自然甜味",emoji:"🍠"},
-    {id:11,name:"南瓜蛋餅",price:40,desc:"濃郁南瓜，營養豐富",emoji:"🎃"},
-    {id:12,name:"總匯蛋餅",price:55,desc:"多種食材，豐盛美味",hot:true,emoji:"🫑🥕🌽🧀"}
+    {id:1,name:"原味招牌蛋餅",price:30,desc:"每日新鮮手煎餅皮+自製醬料",hot:true,emoji:"🍳"},
+    {id:2,name:"玉米蛋餅",price:35,desc:"香甜玉米粒，口感豐富",emoji:"🌽"},
+    {id:3,name:"紅蘿蔔蛋餅",price:38,desc:"健康蔬食，清甜爽口",emoji:"🥕"},
+    {id:4,name:"塔香蛋餅",price:38,desc:"九層塔香氣四溢",customImg:"BASIL"},
+    {id:5,name:"青椒蛋餅",price:40,desc:"清脆青椒，清爽健康",emoji:"🫑"},
+    {id:6,name:"起士蛋餅",price:40,desc:"濃郁起士，香氣滿溢",hot:true,emoji:"🧀"},
+    {id:7,name:"金針菇蛋餅",price:40,desc:"鮮嫩金針菇，口感Q彈",customImg:"ENOKI"},
+    {id:8,name:"高麗菜蛋餅",price:43,desc:"新鮮高麗菜，清甜爽脆",customImg:"CABBAGE"},
+    {id:9,name:"馬鈴薯蛋餅",price:43,desc:"鬆軟馬鈴薯，飽足感十足",emoji:"🥔"},
+    {id:10,name:"地瓜蛋餅",price:43,desc:"香甜地瓜，自然甜味",emoji:"🍠"},
+    {id:11,name:"南瓜蛋餅",price:43,desc:"濃郁南瓜，營養豐富",emoji:"🎃"},
+    {id:12,name:"總匯蛋餅",price:58,desc:"多種食材，豐盛美味",hot:true,emoji:"🫑🥕🌽🧀"}
   ]},
   {cat:"元氣吐司",hasAddons:true,items:[
-    {id:13,name:"玉米蛋吐司",price:35,desc:"內含生菜、黃瓜、蕃茄",emoji:"🌽"},
-    {id:14,name:"水果吐司",price:35,desc:"新鮮水果，清爽美味",customImg:"PINEAPPLE"},
-    {id:15,name:"香煎馬鈴薯吐司",price:38,desc:"香煎馬鈴薯，鬆軟可口",emoji:"🥔"},
-    {id:16,name:"香煎地瓜吐司",price:38,desc:"香甜地瓜，健康美味",emoji:"🍠"},
-    {id:17,name:"歐姆起司蛋吐司",price:40,desc:"含起士，濃郁香滑",hot:true,emoji:"🍳🧀"},
-    {id:18,name:"南瓜蛋吐司",price:48,desc:"南瓜內餡，營養滿分",emoji:"🎃"},
-    {id:19,name:"馬鈴薯歐姆蛋吐司",price:55,desc:"含起士，豐盛飽足",emoji:"🥔🍳🧀"},
-    {id:20,name:"地瓜歐姆蛋吐司",price:55,desc:"含起士，香甜濃郁",emoji:"🍠🍳🧀"},
-    {id:21,name:"地瓜總匯吐司",price:65,desc:"含起士，多種食材",hot:true,emoji:"🍠🍳🧀"},
-    {id:22,name:"馬鈴薯總匯吐司",price:65,desc:"含起士，豐盛總匯",emoji:"🥔🍳🧀"}
+    {id:13,name:"玉米蛋吐司",price:38,desc:"內含生菜、黃瓜、蕃茄",emoji:"🌽"},
+    {id:14,name:"水果吐司",price:38,desc:"新鮮水果，清爽美味",customImg:"PINEAPPLE"},
+    {id:15,name:"香煎馬鈴薯吐司",price:40,desc:"香煎馬鈴薯，鬆軟可口",emoji:"🥔"},
+    {id:16,name:"香煎地瓜吐司",price:40,desc:"香甜地瓜，健康美味",emoji:"🍠"},
+    {id:17,name:"歐姆起司蛋吐司",price:43,desc:"含起士，濃郁香滑",hot:true,emoji:"🍳🧀"},
+    {id:18,name:"南瓜蛋吐司",price:50,desc:"南瓜內餡，營養滿分",emoji:"🎃"},
+    {id:19,name:"馬鈴薯歐姆蛋吐司",price:58,desc:"含起士，豐盛飽足",emoji:"🥔🍳🧀"},
+    {id:20,name:"地瓜歐姆蛋吐司",price:58,desc:"含起士，香甜濃郁",emoji:"🍠🍳🧀"},
+    {id:21,name:"地瓜總匯吐司",price:68,desc:"含起士，多種食材",hot:true,emoji:"🍠🍳🧀"},
+    {id:22,name:"馬鈴薯總匯吐司",price:68,desc:"含起士，豐盛總匯",emoji:"🥔🍳🧀"}
   ]},
   {cat:"活力單點",items:[
     {id:23,name:"花生吐司",price:20,desc:"香濃花生醬，經典美味",emoji:"🥜"},
     {id:24,name:"巧克力吐司",price:20,desc:"香甜巧克力，幸福滋味",emoji:"🍫"},
     {id:25,name:"芝麻吐司",price:25,desc:"香濃芝麻，營養豐富",customImg:"SESAME"},
-    {id:26,name:"香煎馬鈴薯片",price:35,desc:"香脆馬鈴薯，酥脆好吃",emoji:"🥔"},
-    {id:27,name:"香煎地瓜片",price:35,desc:"香甜地瓜片，健康美味",emoji:"🍠"},
-    {id:28,name:"厚蛋歐姆",price:38,desc:"含起士，厚實香滑",hot:true,emoji:"🍳🧀"}
+    {id:26,name:"香煎馬鈴薯片",price:40,desc:"香脆馬鈴薯，酥脆好吃",emoji:"🥔"},
+    {id:27,name:"香煎地瓜片",price:40,desc:"香甜地瓜片，健康美味",emoji:"🍠"},
+    {id:28,name:"厚蛋歐姆",price:40,desc:"含起士，厚實香滑",hot:true,emoji:"🍳🧀"}
   ]},
   {cat:"活力飲品",items:[
     {id:29,name:"非基改豆漿",price:20,desc:"純正豆漿，香醇濃郁",hot:true,customImg:"SOYBEAN"},
     {id:33,name:"無糖豆漿",price:20,desc:"純正無糖豆漿，清爽健康",customImg:"SOYBEAN"},
-    {id:30,name:"錫蘭紅茶",price:20,desc:"清香紅茶，提神醒腦",emoji:"🍃"},
+    {id:30,name:"高山紅茶",price:20,desc:"清香紅茶，提神醒腦",emoji:"🍃"},
     {id:31,name:"豆漿紅茶",price:20,desc:"豆漿加紅茶，獨特風味",emoji:"🍃",customImg:"SOYBEAN"},
     {id:32,name:"芝麻豆漿",price:25,desc:"芝麻豆漿，香濃順口",customImg:"SESAME_SOYBEAN"}
   ]}
@@ -424,8 +425,9 @@ function renderCount(){
 function buildImap(){
   var m={};for(var s=0;s<menu.length;s++)for(var i=0;i<menu[s].items.length;i++){var it=menu[s].items[i];m[it.id]=it;}return m;
 }
-function getAddonPrice(id){if(!addons[id])return 0;var t=0;for(var k=0;k<addonOptions.length;k++){if(addons[id][addonOptions[k].key])t+=addonOptions[k].price;}return t;}
-function getAddonLabel(id){if(!addons[id])return "";var l=[];for(var k=0;k<addonOptions.length;k++){if(addons[id][addonOptions[k].key])l.push(addonOptions[k].label);}return l.join("、");}
+function getAllAddonOptions(){return addonOptions.concat(addonOptionsEggCrepe.filter(function(a){return !addonOptions.find(function(b){return b.key===a.key;});}).filter(function(){return false;}));}
+function getAddonPrice(id){if(!addons[id])return 0;var t=0;var allOpts=addonOptions;for(var k=0;k<allOpts.length;k++){if(addons[id][allOpts[k].key])t+=allOpts[k].price;}return t;}
+function getAddonLabel(id){if(!addons[id])return "";var l=[];var allOpts=addonOptions;for(var k=0;k<allOpts.length;k++){if(addons[id][allOpts[k].key])l.push(allOpts[k].label);}return l.join("、");}
 
 function renderCart(){
   var imap=buildImap();
