@@ -342,7 +342,20 @@ function saveNewCat(){
 }
 
 function q(id){return cart[id]||0;}
-function add(id){if(soldOut[id])return;cart[id]=(cart[id]||0)+1;if(!sauce[id])sauce[id]="自製醬油";if(!addons[id])addons[id]={};render();}
+function add(id){
+  if(soldOut[id])return;
+  cart[id]=(cart[id]||0)+1;
+  // 只有蛋餅類才設定醬料
+  var hasSauce=false;
+  for(var s=0;s<menu.length;s++){
+    for(var i=0;i<menu[s].items.length;i++){
+      if(menu[s].items[i].id===Number(id)&&menu[s].hasSauce){hasSauce=true;break;}
+    }
+  }
+  if(hasSauce&&!sauce[id])sauce[id]="自製醬油";
+  if(!addons[id])addons[id]={};
+  render();
+}
 function rem(id){if(!cart[id])return;cart[id]--;if(cart[id]<=0){delete cart[id];delete sauce[id];delete addons[id];}render();}
 function setSauce(id,s){sauce[id]=s;renderMenu();}
 function toggleAddon(id,key){if(!addons[id])addons[id]={};addons[id][key]=!addons[id][key];renderMenu();}
