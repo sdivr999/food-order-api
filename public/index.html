@@ -363,8 +363,6 @@ function setCat(c){activeCat=c;render();}
 function showPanel(id){document.getElementById("overlay").style.display="block";document.getElementById(id).style.display="block";}
 function openCart(){
   if(isClosed){alert("目前暫停點餐，請稍後再試！");return;}
-  var now=new Date();var day=now.getDay();
-  if(day===0){alert("週日公休，感謝您的支持！");return;}
   showPanel("cart-panel");renderCart();
 }
 function closePanel(){
@@ -464,9 +462,9 @@ function renderCart(){
   var openMin=6*60+30;
   var closeMin=closeHour*60;
   var nowMin=now.getHours()*60+now.getMinutes();
-  var startMin=Math.max(Math.ceil(nowMin/15)*15+15, openMin);
+  var startMin=Math.ceil(nowMin/15)*15+15;
   var times=[];
-  for(var tm=startMin;tm<closeMin;tm+=15){var hh=Math.floor(tm/60);var mm=tm%60;times.push((hh<10?"0":"")+hh+":"+(mm<10?"0":"")+mm);}
+  for(var tm=startMin;tm<startMin+180;tm+=15){var hh=Math.floor(tm/60)%24;var mm=tm%60;times.push((hh<10?"0":"")+hh+":"+(mm<10?"0":"")+mm);}
   h+='<label class="field-label">取餐時間</label><select class="time-select" id="pickup-time"><option value="">請選擇取餐時間</option>';
   if(times.length===0){h+='<option disabled>今日已超過營業時間</option>';}
   else{for(var i=0;i<times.length;i++)h+='<option>'+times[i]+'</option>';}
@@ -494,7 +492,7 @@ function placeOrder(){
   });
   var total=items.reduce(function(s,i){return s+(i.price+(i.addonPrice||0))*i.qty;},0);
   var note=document.getElementById("note-input").value;
-  var oid=String(orderCounter).padStart(3,"0");orderCounter++;
+  var oid=phone.slice(-3);
   document.getElementById("order-btn").disabled=true;document.getElementById("sending-msg").style.display="block";
   fetch(NOTIFY_API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({items:items,total:total,note:note,orderId:oid,phone:phone,pickup:pickup})})
   .catch(function(e){console.error(e);})
