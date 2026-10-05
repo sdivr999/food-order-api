@@ -10,75 +10,87 @@
         "name": "原味招牌蛋餅",
         "price": 30,
         "desc": "每日新鮮手煎餅皮+自製醬料",
-        "hot": true
+        "hot": true,
+        "emoji": "🍳"
       },
       {
         "id": 2,
         "name": "玉米蛋餅",
         "price": 35,
-        "desc": "香甜玉米粒，口感豐富"
+        "desc": "香甜玉米粒，口感豐富",
+        "emoji": "🌽"
       },
       {
         "id": 3,
         "name": "紅蘿蔔蛋餅",
         "price": 38,
-        "desc": "健康蔬食，清甜爽口"
+        "desc": "健康蔬食，清甜爽口",
+        "emoji": "🥕"
       },
       {
         "id": 4,
         "name": "塔香蛋餅",
         "price": 38,
-        "desc": "九層塔香氣四溢"
+        "desc": "九層塔香氣四溢",
+        "customImg": "BASIL"
       },
       {
         "id": 5,
         "name": "青椒蛋餅",
         "price": 40,
-        "desc": "清脆青椒，清爽健康"
+        "desc": "清脆青椒，清爽健康",
+        "emoji": "🫑"
       },
       {
         "id": 6,
         "name": "起士蛋餅",
         "price": 40,
         "desc": "濃郁起士，香氣滿溢",
-        "hot": true
+        "hot": true,
+        "emoji": "🧀"
       },
       {
         "id": 7,
         "name": "金針菇蛋餅",
         "price": 40,
-        "desc": "鮮嫩金針菇，口感Q彈"
+        "desc": "鮮嫩金針菇，口感Q彈",
+        "customImg": "ENOKI"
       },
       {
         "id": 8,
         "name": "高麗菜蛋餅",
         "price": 43,
-        "desc": "新鮮高麗菜，清甜爽脆"
+        "desc": "新鮮高麗菜，清甜爽脆",
+        "customImg": "CABBAGE"
       },
       {
         "id": 9,
         "name": "馬鈴薯蛋餅",
         "price": 43,
-        "desc": "鬆軟馬鈴薯，飽足感十足"
+        "desc": "鬆軟馬鈴薯，飽足感十足",
+        "emoji": "🥔"
       },
       {
         "id": 10,
         "name": "地瓜蛋餅",
         "price": 43,
-        "desc": "香甜地瓜，自然甜味"
+        "desc": "香甜地瓜，自然甜味",
+        "emoji": "🍠"
       },
       {
         "id": 11,
         "name": "南瓜蛋餅",
         "price": 43,
-        "desc": "濃郁南瓜，營養豐富"
+        "desc": "濃郁南瓜，營養豐富",
+        "emoji": "🎃"
       },
       {
         "id": 12,
         "name": "總匯蛋餅",
         "price": 58,
         "desc": "多種食材，豐盛美味",
-        "hot": true
+        "hot": true,
+        "emoji": "🫑🥕🌽🧀"
       }
     ]
   },
@@ -90,63 +102,73 @@
         "id": 13,
         "name": "玉米蛋吐司",
         "price": 38,
-        "desc": "內含生菜、黃瓜、蕃茄"
+        "desc": "內含生菜、黃瓜、蕃茄",
+        "emoji": "🌽"
       },
       {
         "id": 14,
         "name": "水果吐司",
         "price": 38,
-        "desc": "新鮮水果，清爽美味"
+        "desc": "新鮮水果，清爽美味",
+        "customImg": "PINEAPPLE"
       },
       {
         "id": 15,
         "name": "香煎馬鈴薯吐司",
         "price": 40,
-        "desc": "香煎馬鈴薯，鬆軟可口"
+        "desc": "香煎馬鈴薯，鬆軟可口",
+        "emoji": "🥔"
       },
       {
         "id": 16,
         "name": "香煎地瓜吐司",
         "price": 40,
-        "desc": "香甜地瓜，健康美味"
+        "desc": "香甜地瓜，健康美味",
+        "emoji": "🍠"
       },
       {
         "id": 17,
         "name": "歐姆起司蛋吐司",
         "price": 43,
         "desc": "含起士，濃郁香滑",
-        "hot": true
+        "hot": true,
+        "emoji": "🍳🧀"
       },
       {
         "id": 18,
         "name": "南瓜蛋吐司",
         "price": 50,
-        "desc": "南瓜內餡，營養滿分"
+        "desc": "南瓜內餡，營養滿分",
+        "emoji": "🎃"
       },
       {
         "id": 19,
         "name": "馬鈴薯歐姆蛋吐司",
         "price": 58,
-        "desc": "含起士，豐盛飽足"
+        "desc": "含起士，豐盛飽足",
+        "emoji": "🥔🍳🧀"
       },
       {
         "id": 20,
         "name": "地瓜歐姆蛋吐司",
         "price": 58,
-        "desc": "含起士，香甜濃郁"
+        "desc": "含起士，香甜濃郁",
+        "emoji": "🍠🍳🧀"
       },
       {
         "id": 21,
         "name": "地瓜總匯吐司",
         "price": 68,
         "desc": "含起士，多種食材",
-        "hot": true
+        "hot": true,
+        "emoji": "🍠🍳🧀"
       },
       {
         "id": 22,
         "name": "馬鈴薯總匯吐司",
         "price": 68,
-        "desc": "含起士，豐盛總匯"
+        "desc": "含起士，豐盛總匯",
+        "emoji": "🥔🍳🧀"
       }
     ]
   },
@@ -157,38 +179,44 @@
         "id": 23,
         "name": "花生吐司",
         "price": 20,
-        "desc": "香濃花生醬，經典美味"
+        "desc": "香濃花生醬，經典美味",
+        "emoji": "🥜"
       },
       {
         "id": 24,
         "name": "巧克力吐司",
         "price": 20,
-        "desc": "香甜巧克力，幸福滋味"
+        "desc": "香甜巧克力，幸福滋味",
+        "emoji": "🍫"
       },
       {
         "id": 25,
         "name": "芝麻吐司",
         "price": 25,
-        "desc": "香濃芝麻，營養豐富"
+        "desc": "香濃芝麻，營養豐富",
+        "customImg": "SESAME"
       },
       {
         "id": 26,
         "name": "香煎馬鈴薯片",
         "price": 40,
-        "desc": "香脆馬鈴薯，酥脆好吃"
+        "desc": "香脆馬鈴薯，酥脆好吃",
+        "emoji": "🥔"
       },
       {
         "id": 27,
         "name": "香煎地瓜片",
         "price": 40,
-        "desc": "香甜地瓜片，健康美味"
+        "desc": "香甜地瓜片，健康美味",
+        "emoji": "🍠"
       },
       {
         "id": 28,
         "name": "厚蛋歐姆",
         "price": 40,
         "desc": "含起士，厚實香滑",
-        "hot": true
+        "hot": true,
+        "emoji": "🍳🧀"
       }
     ]
   },
@@ -200,25 +228,30 @@
         "name": "非基改豆漿",
         "price": 20,
         "desc": "純正豆漿，香醇濃郁",
-        "hot": true
+        "hot": true,
+        "customImg": "SOYBEAN"
       },
       {
         "id": 30,
         "name": "高山紅茶",
         "price": 20,
-        "desc": "清香高山紅茶，提神醒腦"
+        "desc": "清香高山紅茶，提神醒腦",
+        "emoji": "🍃"
       },
       {
         "id": 31,
         "name": "豆漿紅茶",
         "price": 20,
-        "desc": "豆漿加紅茶，獨特風味"
+        "desc": "豆漿加紅茶，獨特風味",
+        "emoji": "🍃",
+        "customImg": "SOYBEAN"
       },
       {
         "id": 32,
         "name": "芝麻豆漿",
         "price": 25,
-        "desc": "芝麻豆漿，香濃順口"
+        "desc": "芝麻豆漿，香濃順口",
+        "customImg": "SESAME_SOYBEAN"
       }
     ]
   }
