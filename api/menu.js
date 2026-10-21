@@ -1,4 +1,19 @@
 export default async function handler(req, res) {
+  // CORS 要允許 POST 和這個 header
+res.setHeader('Access-Control-Allow-Methods','GET,PUT,POST,OPTIONS');
+res.setHeader('Access-Control-Allow-Headers','Content-Type,x-admin-password');
+if (req.method === 'OPTIONS') return res.status(200).end();
+
+// 登入驗證
+if (req.method === 'POST') {
+  const { password } = req.body || {};
+  return res.status(200).json({ ok: !!password && password === process.env.ADMIN_PASSWORD });
+}
+// 儲存要帶正確密碼
+if (req.method === 'PUT' && req.headers['x-admin-password'] !== process.env.ADMIN_PASSWORD) {
+  return res.status(401).json({ error: 'unauthorized' });
+}
+
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, PUT, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
