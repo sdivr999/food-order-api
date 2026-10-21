@@ -25,6 +25,9 @@ export default async function handler(req, res) {
   try {
     await Promise.all(targets.map(to =>
       fetch("https://api.line.me/v2/bot/message/push", {
+        const res = await fetch('https://api.line.me/v2/bot/message/push', {...});
+console.log('LINE status:', res.status, await res.text());
+
         method: "POST",
         headers: {
           "Content-Type": "application/json",
