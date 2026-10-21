@@ -20,14 +20,11 @@ export default async function handler(req, res) {
   const targets = [
     process.env.LINE_USER_ID,
     "C4a17fc529cd96d4841a6df31d347d8c6"
-  ];
+  ].filter(Boolean);
 
   try {
-    await Promise.all(targets.map(to =>
-      fetch("https://api.line.me/v2/bot/message/push", {
-        const res = await fetch('https://api.line.me/v2/bot/message/push', {...});
-console.log('LINE status:', res.status, await res.text());
-
+    const results = await Promise.all(targets.map(async (to) => {
+      const lineRes = await fetch("https://api.line.me/v2/bot/message/push", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -37,9 +34,17 @@ console.log('LINE status:', res.status, await res.text());
           to: to,
           messages: [{ type: "text", text: message }],
         }),
-      })
-    ));
-    res.status(200).json({ success: true });
+      });
+      const text = await lineRes.text();
+      console.log("LINE →", to, "status:", lineRes.status, text);
+      return { to, ok: lineRes.ok, status: lineRes.status, text };
+    }));
+
+    const failed = results.filter(r => !r.ok);
+    if (failed.length === results.length) {
+      return res.status(500).json({ error: "傳送失敗", details: failed });
+    }
+    res.status(200).json({ success: true, failed });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "傳送失敗" });
