@@ -30,6 +30,8 @@ if (req.method === 'PUT' && req.headers['x-admin-password'] !== process.env.ADMI
     });
     const d = await r.json();
     const content = JSON.parse(Buffer.from(d.content, "base64").toString("utf8"));
+    
+    res.setHeader('Cache-Control','no-store');
     return res.status(200).json({ menu: content, sha: d.sha });
   }
 
