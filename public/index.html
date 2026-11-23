@@ -23,6 +23,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f0f7f0;color:#1a3a1a;}
 .cat-tab{background:transparent;border:1px solid rgba(255,255,255,0.5);color:#e8f8e8;border-radius:20px;padding:5px 14px;font-size:13px;cursor:pointer;white-space:nowrap;}
 .cat-tab.active{background:#c8f0a0;border-color:#c8f0a0;color:#1a3a1a;font-weight:500;}
 .admin-bar{background:#fff3cd;padding:8px 16px;font-size:14px;color:#856404;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;}
+.save-status{font-size:12px;font-weight:500;margin-left:6px;}
 .admin-bar button{background:#856404;color:#fff;border:none;border-radius:8px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap;}
 .notice{text-align:center;padding:12px 16px;font-size:14px;line-height:1.6;}
 .notice.closed{background:#e53e3e;color:#fff;font-weight:500;}
@@ -61,6 +62,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f0f7f0;color:#1a3a1a;}
 .admin-actions{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap;}
 .btn-so{border:none;border-radius:20px;padding:4px 10px;font-size:11px;cursor:pointer;background:#ff9800;color:#fff;}
 .btn-uso{background:#4a9e4a;}
+.btn-edit{border:none;border-radius:20px;padding:4px 10px;font-size:11px;cursor:pointer;background:#3b7dd8;color:#fff;}
 .btn-del{border:none;border-radius:20px;padding:4px 10px;font-size:11px;cursor:pointer;background:#e53e3e;color:#fff;}
 .overlay{position:fixed;inset:0;background:rgba(26,58,26,0.5);z-index:200;display:none;}
 .panel{position:fixed;bottom:0;left:0;right:0;background:#fff;border-radius:20px 20px 0 0;padding:18px 18px 30px;z-index:201;max-height:85vh;overflow-y:auto;display:none;}
@@ -114,10 +116,9 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f0f7f0;color:#1a3a1a;}
   <div class="cat-tabs" id="cat-tabs"></div>
 </div>
 <div id="admin-bar" style="display:none" class="admin-bar">
-  <span>&#9881; 管理模式</span>
+  <span>&#9881; 管理模式 <span id="save-status" class="save-status"></span></span>
   <div style="display:flex;gap:6px;flex-wrap:wrap">
     <button onclick="openAddCat()">新增分類</button>
-    <button onclick="saveMenuToGithub(function(){alert('已儲存！');})">儲存到雲端</button>
     <button id="close-btn-toggle" onclick="toggleClose()" style="background:#e53e3e">關閉今日點餐</button>
     <button onclick="exitAdmin()">離開</button>
   </div>
@@ -142,8 +143,10 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f0f7f0;color:#1a3a1a;}
   <input class="field-input" id="new-price" type="number" placeholder="例：38"/>
   <label class="field-label">描述</label>
   <input class="field-input" id="new-desc" placeholder="例：濃郁起士，香氣滿溢"/>
+  <label class="field-label">圖示 emoji（可留空）</label>
+  <input class="field-input" id="new-emoji" placeholder="例：🧀 或 🍳🧀"/>
   <div class="checkbox-row"><input type="checkbox" id="new-hot"/><label for="new-hot">標記為熱銷</label></div>
-  <button class="confirm-btn" onclick="saveNewItem()">新增</button>
+  <button class="confirm-btn" id="item-confirm-btn" onclick="saveNewItem()">新增</button>
   <button class="cancel-btn" onclick="closePanel()">取消</button>
 </div>
 <div class="panel" id="add-cat-panel">
@@ -183,6 +186,8 @@ var orderCounter=1;
 var isAdmin=false;
 var adminPwd="";            // 只在登入後暫存，不寫在程式碼裡
 var addingToCat=null;
+var editingId=null;         // 正在編輯的品項 id（null = 新增）
+var saving=false,saveAgain=false;
 var adminClickCount=0;
 var adminClickTimer=null;
 var menuSha="";
@@ -242,6 +247,8 @@ var menu=[
     {id:32,name:"芝麻豆漿",price:25,desc:"芝麻豆漿，香濃順口",customImg:"SESAME_SOYBEAN"}
   ]}
 ];
+
+var DEFAULT_MAX_ID=0;menu.forEach(function(c){c.items.forEach(function(i){if(i.id>DEFAULT_MAX_ID)DEFAULT_MAX_ID=i.id;});});
 
 /* ========== 日期與營業時間 ========== */
 function pad(n){return (n<10?"0":"")+n;}
@@ -313,7 +320,8 @@ function applyMenuData(d){
   var emojiMap=buildEmojiMap();
   for(var s=0;s<cats.length;s++)for(var i=0;i<cats[s].items.length;i++){
     var e=emojiMap[cats[s].items[i].id];
-    if(e){if(e.emoji)cats[s].items[i].emoji=e.emoji;if(e.customImg)cats[s].items[i].customImg=e.customImg;}
+    var c=cats[s].items[i];
+    if(e&&!c.emoji&&!c.customImg){if(e.emoji)c.emoji=e.emoji;if(e.customImg)c.customImg=e.customImg;}
   }
   menu=cats;menuSha=d.sha||menuSha;
   if(activeCat>=menu.length)activeCat=-1;
@@ -330,8 +338,14 @@ function loadMenu(){
     });
 }
 
+function setSaveStatus(t,color){
+  var el=document.getElementById("save-status");if(!el)return;
+  el.textContent=t;el.style.color=color||"#856404";
+}
 function saveMenuToGithub(callback){
-  if(!menuSha){alert("菜單尚未載入完成，請重新整理頁面再試");return;}
+  if(!menuSha){alert("菜單尚未載入完成，請重新整理頁面再試");loadMenu();return;}
+  if(saving){saveAgain=true;return;}   // 上一次還在存，存完再存一次最新內容
+  saving=true;setSaveStatus("儲存中…");
   // 清掉過期的每日狀態
   var tk=todayKey();var so={};
   for(var k in settings.soldOut)if(settings.soldOut[k]===tk)so[k]=tk;
@@ -341,17 +355,25 @@ function saveMenuToGithub(callback){
   .then(function(r){
     return r.json().catch(function(){return {};}).then(function(d){
       if(r.status===401)throw new Error("密碼驗證失敗，請重新進入管理模式");
-      if(r.status===409)throw new Error("菜單已在其他裝置被修改，請重新整理頁面後再操作");
+      if(r.status===409)throw new Error("菜單已在其他裝置被修改，畫面已更新為最新菜單，請再操作一次");
       if(!r.ok)throw new Error(d.error||("HTTP "+r.status));
       if(d.sha)menuSha=d.sha;
+      saving=false;
+      if(saveAgain){saveAgain=false;saveMenuToGithub(callback);return;}
+      setSaveStatus("✓ 已儲存","#2d6a2d");
       if(callback)callback();
     });
   })
-  .catch(function(e){alert("儲存失敗："+e.message);});
+  .catch(function(e){
+    saving=false;saveAgain=false;
+    setSaveStatus("✗ 未儲存","#e53e3e");
+    alert("儲存失敗："+e.message);
+    loadMenu();                         // 畫面換回雲端上真正的菜單
+  });
 }
 
 function nextId(){
-  var max=0;
+  var max=DEFAULT_MAX_ID;   // 不重複使用已刪除品項的編號（避免撿到舊圖示）
   for(var s=0;s<menu.length;s++)for(var i=0;i<menu[s].items.length;i++)if(menu[s].items[i].id>max)max=menu[s].items[i].id;
   return max+1;
 }
@@ -397,7 +419,7 @@ function toggleClose(){
   render();
   saveMenuToGithub();
 }
-function exitAdmin(){isAdmin=false;adminPwd="";document.getElementById("admin-bar").style.display="none";render();}
+function exitAdmin(){isAdmin=false;adminPwd="";setSaveStatus("");document.getElementById("admin-bar").style.display="none";render();}
 
 function toggleSoldOut(id){
   if(isSoldOutToday(id))delete settings.soldOut[id];
@@ -409,31 +431,57 @@ function removeLinesOf(ids){
   cartLines=cartLines.filter(function(l){return ids.indexOf(l.id)<0;});
 }
 function deleteItem(ci,id){
-  if(!confirm("確定刪除？"))return;
+  var _n=(buildImap()[id]||{}).name||"";if(!confirm("確定刪除「"+_n+"」？"))return;
   menu[ci].items=menu[ci].items.filter(function(it){return it.id!==id;});
-  removeLinesOf([id]);render();
+  removeLinesOf([id]);render();saveMenuToGithub();
 }
 function deleteCat(ci){
   if(!confirm("確定刪除整個分類？"))return;
   removeLinesOf(menu[ci].items.map(function(it){return it.id;}));
-  menu.splice(ci,1);activeCat=-1;render();
+  menu.splice(ci,1);activeCat=-1;render();saveMenuToGithub();
+}
+function fillItemForm(it,title,btn){
+  document.getElementById("new-name").value=it.name||"";
+  document.getElementById("new-price").value=it.price!=null?it.price:"";
+  document.getElementById("new-desc").value=it.desc||"";
+  document.getElementById("new-emoji").value=it.emoji||"";
+  document.getElementById("new-hot").checked=!!it.hot;
+  document.getElementById("add-item-title").textContent=title;
+  document.getElementById("item-confirm-btn").textContent=btn;
+  showPanel("add-item-panel");
 }
 function openAddItem(ci){
-  addingToCat=ci;
-  document.getElementById("new-name").value="";document.getElementById("new-price").value="";
-  document.getElementById("new-desc").value="";document.getElementById("new-hot").checked=false;
-  document.getElementById("add-item-title").textContent="新增品項 - "+menu[ci].cat;
-  showPanel("add-item-panel");
+  addingToCat=ci;editingId=null;
+  fillItemForm({},"新增品項 - "+menu[ci].cat,"新增");
+}
+function openEditItem(id){
+  var it=buildImap()[id];if(!it)return;
+  editingId=id;addingToCat=null;
+  fillItemForm(it,"編輯品項","儲存修改");
 }
 function saveNewItem(){
   var name=document.getElementById("new-name").value.trim();
-  var price=parseInt(document.getElementById("new-price").value);
-  if(!name||!price){alert("請填寫名稱和價格！");return;}
-  var item={id:nextId(),name:name,price:price,desc:document.getElementById("new-desc").value.trim()};
-  if(document.getElementById("new-hot").checked)item.hot=true;
-  menu[addingToCat].items.push(item);
-  menu[addingToCat].items.sort(function(a,b){return a.price-b.price;});
-  closePanel();render();
+  var price=parseInt(document.getElementById("new-price").value,10);
+  if(!name||!(price>0)){alert("請填寫名稱和價格！");return;}
+  var desc=document.getElementById("new-desc").value.trim();
+  var emoji=document.getElementById("new-emoji").value.trim();
+  var hot=document.getElementById("new-hot").checked;
+  var sec;
+  if(editingId!==null){
+    var it=buildImap()[editingId];if(!it){closePanel();return;}
+    it.name=name;it.price=price;it.desc=desc;
+    if(emoji)it.emoji=emoji;else delete it.emoji;
+    if(hot)it.hot=true;else delete it.hot;
+    sec=secOf(editingId);
+  } else {
+    var item={id:nextId(),name:name,price:price,desc:desc};
+    if(emoji)item.emoji=emoji;
+    if(hot)item.hot=true;
+    sec=menu[addingToCat];sec.items.push(item);
+  }
+  sec.items.sort(function(a,b){return a.price-b.price;});
+  editingId=null;
+  closePanel();render();saveMenuToGithub();
 }
 function openAddCat(){
   document.getElementById("new-cat-name").value="";document.getElementById("new-cat-sauce").checked=false;
@@ -444,7 +492,7 @@ function saveNewCat(){
   if(!name){alert("請填寫分類名稱！");return;}
   var cat={cat:name,items:[]};
   if(document.getElementById("new-cat-sauce").checked)cat.hasSauce=true;
-  menu.push(cat);closePanel();render();
+  menu.push(cat);closePanel();render();saveMenuToGithub();
 }
 
 /* ========== 購物車（同品項不同加料分開計算） ========== */
@@ -613,7 +661,7 @@ function renderMenu(){
         else{h+='<div class="qty-control"><button class="qty-btn minus" onclick="decSimple('+it.id+')">-</button><span class="qty-num">'+qt+'</span><button class="qty-btn plus" onclick="addItem('+it.id+')">+</button></div>';}
       }
       h+='</div></div>';
-      if(isAdmin)h+='<div class="admin-actions"><button class="btn-so'+(so?' btn-uso':'')+'" onclick="toggleSoldOut('+it.id+')">'+(so?'恢復供應':'標記今日售完')+'</button><button class="btn-del" onclick="deleteItem('+ci+','+it.id+')">刪除</button></div>';
+      if(isAdmin)h+='<div class="admin-actions"><button class="btn-so'+(so?' btn-uso':'')+'" onclick="toggleSoldOut('+it.id+')">'+(so?'恢復供應':'標記今日售完')+'</button><button class="btn-edit" onclick="openEditItem('+it.id+')">編輯</button><button class="btn-del" onclick="deleteItem('+ci+','+it.id+')">刪除</button></div>';
       h+='</div>';
     }
     h+='</div>';
