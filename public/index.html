@@ -266,10 +266,10 @@ function slotsFor(d,isToday){
   var start=h.open;
   if(isToday){
     var now=new Date();var nm=now.getHours()*60+now.getMinutes();
-    start=Math.max(start,Math.ceil(nm/15)*15+15);
+    start=Math.max(start,Math.ceil(nm/10)*10+10);   // 最快下單後 10 分鐘，每 10 分鐘一格
   }
   var out=[];
-  for(var t=start;t<h.close;t+=15)out.push(pad(Math.floor(t/60))+":"+pad(t%60));
+  for(var t=start;t<h.close;t+=10)out.push(pad(Math.floor(t/60))+":"+pad(t%60));
   return out;
 }
 function nextBizDay(){
