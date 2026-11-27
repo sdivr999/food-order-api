@@ -270,7 +270,11 @@
           "id": 35,
           "name": "菇菇奶油燉飯（小）",
           "price": 80,
-          "desc": ""
+          "desc": "",
+          "addons": [
+            "cheese",
+            "egg"
+          ]
         },
         {
           "id": 34,
