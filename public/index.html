@@ -148,6 +148,8 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f0f7f0;color:#1a3a1a;}
   <label class="field-label">圖示 emoji（可留空）</label>
   <input class="field-input" id="new-emoji" placeholder="例：🧀 或 🍳🧀"/>
   <div class="checkbox-row"><input type="checkbox" id="new-hot"/><label for="new-hot">標記為熱銷</label></div>
+  <label class="field-label">客人可加購</label>
+  <div class="checkbox-row"><input type="checkbox" id="new-addon-cheese"/><label for="new-addon-cheese">+起士 10元</label>　<input type="checkbox" id="new-addon-egg"/><label for="new-addon-egg">+蛋 15元</label></div>
   <button class="confirm-btn" id="item-confirm-btn" onclick="saveNewItem()">新增</button>
   <button class="cancel-btn" onclick="closePanel()">取消</button>
 </div>
@@ -249,7 +251,8 @@ var CAT_I18N={
   "軟Q手工蛋餅":{en:"Handmade Taiwanese Crepes (Dan Bing)",vi:"Bánh crepe Đài Loan làm tay",id:"Dan Bing (Crepe Taiwan) Buatan Tangan"},
   "元氣吐司":{en:"Toast Sandwiches",vi:"Bánh mì sandwich nướng",id:"Roti Panggang Isi"},
   "活力單點":{en:"Sides & Simple Toast",vi:"Món gọi lẻ",id:"Menu Satuan"},
-  "活力飲品":{en:"Drinks",vi:"Đồ uống",id:"Minuman"}
+  "活力飲品":{en:"Drinks",vi:"Đồ uống",id:"Minuman"},
+  "中午限定特餐（11:00後可取餐）":{en:"Lunch Specials (pickup after 11:00)",vi:"Món đặc biệt buổi trưa (lấy sau 11:00)",id:"Menu Spesial Siang (ambil setelah 11:00)"}
 };
 var SAUCE_I18N={
   "自製醬油":{en:"House-made soy sauce",vi:"Nước tương nhà làm",id:"Kecap asin buatan sendiri"},
@@ -294,6 +297,8 @@ var ITEM_I18N={
   30:["高山紅茶","清香高山紅茶，提神醒腦",{en:["High Mountain Black Tea","Fragrant mountain-grown black tea, refreshing"],vi:["Hồng trà cao sơn","Hồng trà vùng núi cao thơm nhẹ, giúp tỉnh táo"],id:["Teh Hitam Pegunungan","Teh hitam pegunungan yang harum dan menyegarkan"]}],
   31:["豆漿紅茶","豆漿加紅茶，獨特風味",{en:["Soy Milk Black Tea","Soy milk with black tea, a unique blend"],vi:["Hồng trà sữa đậu nành","Sữa đậu nành pha hồng trà, hương vị độc đáo"],id:["Teh Hitam Susu Kedelai","Perpaduan susu kedelai dan teh hitam"]}],
   32:["芝麻豆漿","芝麻豆漿，香濃順口",{en:["Sesame Soy Milk","Smooth and nutty"],vi:["Sữa đậu nành mè","Thơm béo, dễ uống"],id:["Susu Kedelai Wijen","Gurih dan lembut"]}],
+  34:["菇菇奶油燉飯（大）","",{en:["Creamy Mushroom Risotto (Large)",""],vi:["Cơm risotto nấm sốt kem (lớn)",""],id:["Risotto Jamur Krim (Besar)",""]}],
+  35:["菇菇奶油燉飯（小）","",{en:["Creamy Mushroom Risotto (Small)",""],vi:["Cơm risotto nấm sốt kem (nhỏ)",""],id:["Risotto Jamur Krim (Kecil)",""]}],
   33:["無糖豆漿","",{en:["Unsweetened Soy Milk",""],vi:["Sữa đậu nành không đường",""],id:["Susu Kedelai Tanpa Gula",""]}]
 };
 
@@ -463,9 +468,17 @@ function secOf(id){
   for(var s=0;s<menu.length;s++)for(var i=0;i<menu[s].items.length;i++)if(menu[s].items[i].id===id)return menu[s];
   return null;
 }
-function hasOptions(id){var sec=secOf(id);return !!(sec&&(sec.hasSauce||sec.hasAddons));}
+function hasOptions(id){var sec=secOf(id);return !!(sec&&(sec.hasSauce||getOpts(id).length));}
 // 蛋餅只能加起士；吐司可以加起士或加蛋
-function getOpts(id){var sec=secOf(id);if(!sec||!sec.hasAddons)return [];return sec.hasSauce?addonOptionsEggCrepe:addonOptions;}
+// 分類預設的加購項目
+function catAddonKeys(sec){if(!sec||!sec.hasAddons)return [];return sec.hasSauce?["cheese"]:["cheese","egg"];}
+// 品項有自己設定的加購（it.addons）就用品項的，否則用分類預設
+function getOpts(id){
+  var sec=secOf(id);if(!sec)return [];
+  var it=buildImap()[Number(id)];
+  var keys=(it&&Array.isArray(it.addons))?it.addons:catAddonKeys(sec);
+  return addonOptions.filter(function(o){return keys.indexOf(o.key)>=0;});
+}
 
 function applyMenuData(d){
   if(!d||!d.menu)return;
@@ -599,7 +612,9 @@ function deleteCat(ci){
   removeLinesOf(menu[ci].items.map(function(it){return it.id;}));
   menu.splice(ci,1);activeCat=-1;render();saveMenuToGithub();
 }
-function fillItemForm(it,title,btn){
+function fillItemForm(it,title,btn,addonKeys){
+  document.getElementById("new-addon-cheese").checked=addonKeys.indexOf("cheese")>=0;
+  document.getElementById("new-addon-egg").checked=addonKeys.indexOf("egg")>=0;
   document.getElementById("new-name").value=it.name||"";
   document.getElementById("new-price").value=it.price!=null?it.price:"";
   document.getElementById("new-desc").value=it.desc||"";
@@ -611,12 +626,12 @@ function fillItemForm(it,title,btn){
 }
 function openAddItem(ci){
   addingToCat=ci;editingId=null;
-  fillItemForm({},"新增品項 - "+menu[ci].cat,"新增");
+  fillItemForm({},"新增品項 - "+menu[ci].cat,"新增",catAddonKeys(menu[ci]));
 }
 function openEditItem(id){
   var it=buildImap()[id];if(!it)return;
   editingId=id;addingToCat=null;
-  fillItemForm(it,"編輯品項","儲存修改");
+  fillItemForm(it,"編輯品項","儲存修改",getOpts(id).map(function(o){return o.key;}));
 }
 function saveNewItem(){
   var name=document.getElementById("new-name").value.trim();
@@ -625,15 +640,19 @@ function saveNewItem(){
   var desc=document.getElementById("new-desc").value.trim();
   var emoji=document.getElementById("new-emoji").value.trim();
   var hot=document.getElementById("new-hot").checked;
+  var addons=[];
+  if(document.getElementById("new-addon-cheese").checked)addons.push("cheese");
+  if(document.getElementById("new-addon-egg").checked)addons.push("egg");
   var sec;
   if(editingId!==null){
     var it=buildImap()[editingId];if(!it){closePanel();return;}
     it.name=name;it.price=price;it.desc=desc;
     if(emoji)it.emoji=emoji;else delete it.emoji;
     if(hot)it.hot=true;else delete it.hot;
+    it.addons=addons;
     sec=secOf(editingId);
   } else {
-    var item={id:nextId(),name:name,price:price,desc:desc};
+    var item={id:nextId(),name:name,price:price,desc:desc,addons:addons};
     if(emoji)item.emoji=emoji;
     if(hot)item.hot=true;
     sec=menu[addingToCat];sec.items.push(item);
@@ -806,7 +825,7 @@ function renderMenu(){
     for(var i=0;i<sec.items.length;i++){
       var it=sec.items[i];var qt=totalQty(it.id);
       var so=isAdmin?isSoldOutToday(it.id):itemBlocked(it.id);
-      var withOpt=sec.hasSauce||sec.hasAddons;
+      var withOpt=hasOptions(it.id);
       h+='<div class="menu-card'+(so?' sold-out':'')+'">';
       if(so)h+='<div class="sold-out-badge">'+(isAdmin?'今日售完':t("soldOut"))+'</div>';
       else if(it.hot)h+='<div class="popular-badge">'+t("hot")+'</div>';
