@@ -13,6 +13,8 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f0f7f0;color:#1a3a1a;}
 .header-bottom{background:#5aaa4a;padding:6px 16px;display:flex;justify-content:space-between;align-items:center;}
 .header-sub{font-size:12px;color:#e8f8e8;}
 .cart-btn{background:#c8f0a0;border:none;border-radius:50px;padding:7px 14px;font-size:13px;font-weight:500;color:#1a3a1a;cursor:pointer;display:flex;align-items:center;gap:5px;flex-shrink:0;}
+.lang-select{background:#fff;border:none;border-radius:50px;padding:6px 8px;font-size:12px;color:#1a3a1a;max-width:120px;font-family:inherit;}
+.header-right{display:flex;align-items:center;gap:6px;flex-shrink:0;}
 .cart-badge{background:#2d6a2d;color:#c8f0a0;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;}
 .mode-tabs{display:flex;gap:6px;padding:0 16px 8px;background:#5aaa4a;}
 .mode-tab{flex:1;background:transparent;border:1px solid rgba(255,255,255,0.6);color:#fff;border-radius:10px;padding:6px 8px;font-size:13px;cursor:pointer;line-height:1.3;font-family:'Noto Sans TC',sans-serif;}
@@ -110,7 +112,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f0f7f0;color:#1a3a1a;}
   <img class="header-banner" src="img-banner.jpeg" alt="如意樂活蔬食早午餐" onclick="adminClick()"/>
   <div class="header-bottom">
     <div class="header-sub" id="biz-hours">餐點全素・蛋奶素者都可以吃・現點現做</div>
-    <button class="cart-btn" onclick="openCart()">購物車 <span class="cart-badge" id="cart-count" style="display:none">0</span></button>
+    <div class="header-right"><select class="lang-select" id="lang-select" onchange="setLang(this.value)" aria-label="Language"></select><button class="cart-btn" onclick="openCart()"><span id="cart-label">購物車</span> <span class="cart-badge" id="cart-count" style="display:none">0</span></button></div>
   </div>
   <div class="mode-tabs" id="mode-tabs"></div>
   <div class="cat-tabs" id="cat-tabs"></div>
@@ -128,7 +130,7 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f0f7f0;color:#1a3a1a;}
 
 <div class="overlay" id="overlay" onclick="closePanel()"></div>
 <div class="panel" id="cart-panel">
-  <div class="panel-header"><div class="panel-title">我的訂單</div><button class="close-btn" onclick="closePanel()">X</button></div>
+  <div class="panel-header"><div class="panel-title" id="cart-title">我的訂單</div><button class="close-btn" onclick="closePanel()">X</button></div>
   <div id="cart-body"></div>
 </div>
 <div class="panel" id="opt-panel">
@@ -160,9 +162,9 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f0f7f0;color:#1a3a1a;}
 <div class="success-overlay" id="success-overlay">
   <div class="success-box">
     <div class="success-icon">&#x1F389;</div>
-    <div class="success-title">訂單成立！</div>
+    <div class="success-title" id="success-title">訂單成立！</div>
     <div class="success-msg" id="success-msg"></div>
-    <button class="success-btn" onclick="closeSuccess()">繼續點餐</button>
+    <button class="success-btn" id="success-btn" onclick="closeSuccess()">繼續點餐</button>
   </div>
 </div>
 <div class="pwd-overlay" id="pwd-overlay">
@@ -177,6 +179,156 @@ body{font-family:'Noto Sans TC',sans-serif;background:#f0f7f0;color:#1a3a1a;}
   </div>
 </div>
 
+<script>
+/* ========== 多語言（中文 / English / Tiếng Việt / Bahasa Indonesia） ==========
+   - 傳到廚房的訂單通知一律用中文，不受客人選的語言影響
+   - 管理模式一律顯示中文
+   - 菜單翻譯以品項 id 對應，並記住翻譯時的中文名稱／描述：
+     在後台改了中文名稱或描述後，該欄會自動改回顯示中文，不會出現過時的翻譯 */
+var LANGS=[["zh","中文"],["en","English"],["vi","Tiếng Việt"],["id","Bahasa Indonesia"]];
+var T={
+  zh:{cart:"購物車",today:"今天取餐",pre:"預訂",tomorrow:"明天 ",all:"全部",
+    hoursSun:"今日公休（週日）・可預訂週一",hoursSat:"今日營業：06:30-11:00（週六）",hoursWk:"今日營業：06:30-13:00（平日）",
+    closedSun:"今日公休",closedToday:"&#128683; 今日暫停點餐，造成不便敬請見諒",cutoff:"今日點餐已截止",switchPre:"改為預訂 {d}",
+    preNotice:"&#128197; 您正在預訂 <b>{d}</b> 的餐點",soldOut:"售完",hot:"熱銷",inCart:"已點 {n} 份",addMore:"再加一份",add:"加入",
+    addons:"加料",sauce:"醬料",qty:"數量",addToCart:"加入購物車",myOrder:"我的訂單",emptyCart:"購物車是空的，快去選些美食吧！",
+    pickPre:"&#128197; 預訂取餐：",pickToday:"&#128338; 今天取餐：",toPre:"改預訂",toToday:"改今天",itemCount:"品項數量",pcs:"{n} 件",total:"合計",
+    pickupTime:"取餐時間",chooseTime:"請選擇取餐時間",noSlots:"今天已無可取餐時段，請改為預訂",phone:"手機號碼",phonePh:"例：0912345678",
+    note:"備註（外帶/內用桌號/特殊需求）",notePh:"例：外帶、內用3號桌...",sending:"傳送中...",checking:"確認中...",submitting:"送出中...",
+    confirmPre:"確認預訂",orderNow:"立即下單",successTitle:"訂單成立！",successPre:"預訂成功！",thanks:"感謝您的訂購！",
+    orderNo:"訂單編號：",pickupAt:"取餐時間：",readyPre:"當天我們會準時為您準備",readyNow:"請稍候，我們盡快為您準備",continueBtn:"繼續點餐",
+    soldOutRemoved:"今天已售完的餐點已從購物車移除",cantOrderToday:"今天目前無法點餐，可以切換到「預訂 {d}」先訂好餐點喔！",
+    badPhone:"請輸入正確的手機號碼（09 開頭共 10 碼）",needTime:"請選擇取餐時間！",removedItems:"部分餐點已下架，已從購物車移除，請確認後再下單。",
+    closedNow:"很抱歉，今日已暫停點餐，可改為預訂 {d}。",justSoldOut:"部分餐點剛剛售完，已從購物車移除，請確認後再下單。",
+    timePassed:"您選的取餐時間已經過了，請重新選擇。",sendFail:"訂單送出失敗，請再試一次，或直接致電店家點餐。"},
+  en:{cart:"Cart",today:"Pick up today",pre:"Pre-order",tomorrow:"Tomorrow ",all:"All",
+    hoursSun:"Closed today (Sun) · Pre-order for Monday",hoursSat:"Open today 06:30–11:00 (Sat)",hoursWk:"Open today 06:30–13:00 (weekdays)",
+    closedSun:"Closed today",closedToday:"&#128683; Ordering is paused today. Sorry for the inconvenience.",cutoff:"Ordering for today has closed",switchPre:"Pre-order for {d}",
+    preNotice:"&#128197; You are pre-ordering for <b>{d}</b>",soldOut:"Sold out",hot:"Popular",inCart:"{n} in cart",addMore:"Add another",add:"Add",
+    addons:"Add-ons",sauce:"Sauce",qty:"Quantity",addToCart:"Add to cart",myOrder:"My order",emptyCart:"Your cart is empty. Pick something tasty!",
+    pickPre:"&#128197; Pre-order pickup: ",pickToday:"&#128338; Pickup today: ",toPre:"Pre-order instead",toToday:"Today instead",itemCount:"Items",pcs:"{n}",total:"Total",
+    pickupTime:"Pickup time",chooseTime:"Choose a pickup time",noSlots:"No pickup times left today. Please pre-order instead.",phone:"Mobile number (Taiwan)",phonePh:"e.g. 0912345678",
+    note:"Notes (takeout / table number / special requests)",notePh:"e.g. Takeout, Table 3...",sending:"Sending...",checking:"Checking...",submitting:"Submitting...",
+    confirmPre:"Confirm pre-order",orderNow:"Place order",successTitle:"Order placed!",successPre:"Pre-order confirmed!",thanks:"Thank you for your order!",
+    orderNo:"Order number: ",pickupAt:"Pickup time: ",readyPre:"We'll have it ready for you on the day.",readyNow:"We're preparing it now. See you soon!",continueBtn:"Continue ordering",
+    soldOutRemoved:"Items sold out today were removed from your cart.",cantOrderToday:"Ordering for today isn't available right now. You can switch to \"Pre-order {d}\".",
+    badPhone:"Please enter a valid Taiwan mobile number (10 digits starting with 09).",needTime:"Please choose a pickup time.",removedItems:"Some items are no longer available and were removed from your cart. Please check and order again.",
+    closedNow:"Sorry, ordering is paused for today. You can pre-order for {d}.",justSoldOut:"Some items just sold out and were removed from your cart. Please check and order again.",
+    timePassed:"The pickup time you chose has passed. Please choose another.",sendFail:"Your order couldn't be sent. Please try again, or call the shop to order."},
+  vi:{cart:"Giỏ hàng",today:"Lấy hôm nay",pre:"Đặt trước",tomorrow:"Ngày mai ",all:"Tất cả",
+    hoursSun:"Hôm nay nghỉ (CN) · Có thể đặt trước cho thứ Hai",hoursSat:"Hôm nay mở cửa 06:30–11:00 (T7)",hoursWk:"Hôm nay mở cửa 06:30–13:00 (ngày thường)",
+    closedSun:"Hôm nay nghỉ",closedToday:"&#128683; Hôm nay tạm ngưng nhận đơn, xin lỗi vì sự bất tiện.",cutoff:"Đã hết giờ đặt món hôm nay",switchPre:"Đặt trước cho {d}",
+    preNotice:"&#128197; Bạn đang đặt trước món cho <b>{d}</b>",soldOut:"Hết hàng",hot:"Bán chạy",inCart:"Đã chọn {n} phần",addMore:"Thêm phần nữa",add:"Thêm",
+    addons:"Thêm topping",sauce:"Nước sốt",qty:"Số lượng",addToCart:"Thêm vào giỏ",myOrder:"Đơn của tôi",emptyCart:"Giỏ hàng trống, hãy chọn món ngon nhé!",
+    pickPre:"&#128197; Lấy món đặt trước: ",pickToday:"&#128338; Lấy hôm nay: ",toPre:"Đổi sang đặt trước",toToday:"Đổi sang hôm nay",itemCount:"Số món",pcs:"{n} món",total:"Tổng cộng",
+    pickupTime:"Giờ lấy món",chooseTime:"Chọn giờ lấy món",noSlots:"Hôm nay đã hết giờ lấy món, vui lòng đặt trước.",phone:"Số điện thoại (Đài Loan)",phonePh:"VD: 0912345678",
+    note:"Ghi chú (mang đi / số bàn / yêu cầu khác)",notePh:"VD: Mang đi, bàn số 3...",sending:"Đang gửi...",checking:"Đang kiểm tra...",submitting:"Đang gửi đơn...",
+    confirmPre:"Xác nhận đặt trước",orderNow:"Đặt món ngay",successTitle:"Đặt món thành công!",successPre:"Đặt trước thành công!",thanks:"Cảm ơn bạn đã đặt món!",
+    orderNo:"Mã đơn: ",pickupAt:"Giờ lấy món: ",readyPre:"Chúng tôi sẽ chuẩn bị đúng giờ vào hôm đó.",readyNow:"Vui lòng chờ, chúng tôi đang chuẩn bị ngay.",continueBtn:"Tiếp tục đặt món",
+    soldOutRemoved:"Các món hết hàng hôm nay đã được xóa khỏi giỏ.",cantOrderToday:"Hiện không thể đặt món cho hôm nay. Bạn có thể chuyển sang \"Đặt trước {d}\".",
+    badPhone:"Vui lòng nhập số điện thoại Đài Loan hợp lệ (10 số, bắt đầu bằng 09).",needTime:"Vui lòng chọn giờ lấy món.",removedItems:"Một số món đã ngừng bán và đã được xóa khỏi giỏ. Vui lòng kiểm tra rồi đặt lại.",
+    closedNow:"Xin lỗi, hôm nay đã tạm ngưng nhận đơn. Bạn có thể đặt trước cho {d}.",justSoldOut:"Một số món vừa hết hàng và đã được xóa khỏi giỏ. Vui lòng kiểm tra rồi đặt lại.",
+    timePassed:"Giờ lấy món bạn chọn đã qua, vui lòng chọn lại.",sendFail:"Gửi đơn thất bại. Vui lòng thử lại hoặc gọi điện cho quán."},
+  id:{cart:"Keranjang",today:"Ambil hari ini",pre:"Pesan dulu",tomorrow:"Besok ",all:"Semua",
+    hoursSun:"Hari ini tutup (Minggu) · Bisa pesan untuk Senin",hoursSat:"Buka hari ini 06:30–11:00 (Sabtu)",hoursWk:"Buka hari ini 06:30–13:00 (hari kerja)",
+    closedSun:"Hari ini tutup",closedToday:"&#128683; Pemesanan hari ini ditutup sementara. Mohon maaf atas ketidaknyamanannya.",cutoff:"Pemesanan hari ini sudah ditutup",switchPre:"Pesan untuk {d}",
+    preNotice:"&#128197; Anda sedang memesan untuk <b>{d}</b>",soldOut:"Habis",hot:"Terlaris",inCart:"{n} di keranjang",addMore:"Tambah lagi",add:"Tambah",
+    addons:"Tambahan",sauce:"Saus",qty:"Jumlah",addToCart:"Masukkan keranjang",myOrder:"Pesanan saya",emptyCart:"Keranjang masih kosong, yuk pilih makanan!",
+    pickPre:"&#128197; Ambil pesanan: ",pickToday:"&#128338; Ambil hari ini: ",toPre:"Ganti ke pesan dulu",toToday:"Ganti ke hari ini",itemCount:"Jumlah item",pcs:"{n} item",total:"Total",
+    pickupTime:"Waktu ambil",chooseTime:"Pilih waktu ambil",noSlots:"Tidak ada waktu ambil lagi hari ini. Silakan pilih \"Pesan dulu\".",phone:"Nomor HP (Taiwan)",phonePh:"Contoh: 0912345678",
+    note:"Catatan (bungkus / nomor meja / permintaan khusus)",notePh:"Contoh: Bungkus, meja 3...",sending:"Mengirim...",checking:"Memeriksa...",submitting:"Mengirim pesanan...",
+    confirmPre:"Konfirmasi pesanan",orderNow:"Pesan sekarang",successTitle:"Pesanan berhasil!",successPre:"Pesanan berhasil dibuat!",thanks:"Terima kasih atas pesanan Anda!",
+    orderNo:"Nomor pesanan: ",pickupAt:"Waktu ambil: ",readyPre:"Kami akan menyiapkannya tepat waktu pada hari itu.",readyNow:"Mohon tunggu, kami segera menyiapkannya.",continueBtn:"Lanjut pesan",
+    soldOutRemoved:"Item yang habis hari ini sudah dihapus dari keranjang.",cantOrderToday:"Saat ini belum bisa pesan untuk hari ini. Anda bisa pilih \"Pesan dulu {d}\".",
+    badPhone:"Masukkan nomor HP Taiwan yang benar (10 digit, diawali 09).",needTime:"Silakan pilih waktu ambil.",removedItems:"Beberapa item sudah tidak tersedia dan dihapus dari keranjang. Silakan cek lalu pesan lagi.",
+    closedNow:"Maaf, pemesanan hari ini ditutup. Anda bisa pesan untuk {d}.",justSoldOut:"Beberapa item baru saja habis dan dihapus dari keranjang. Silakan cek lalu pesan lagi.",
+    timePassed:"Waktu ambil yang dipilih sudah lewat, silakan pilih lagi.",sendFail:"Pesanan gagal dikirim. Silakan coba lagi atau telepon toko."}
+};
+var WEEKS={zh:["日","一","二","三","四","五","六"],en:["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],vi:["CN","T2","T3","T4","T5","T6","T7"],id:["Min","Sen","Sel","Rab","Kam","Jum","Sab"]};
+var CAT_I18N={
+  "軟Q手工蛋餅":{en:"Handmade Taiwanese Crepes (Dan Bing)",vi:"Bánh crepe Đài Loan làm tay",id:"Dan Bing (Crepe Taiwan) Buatan Tangan"},
+  "元氣吐司":{en:"Toast Sandwiches",vi:"Bánh mì sandwich nướng",id:"Roti Panggang Isi"},
+  "活力單點":{en:"Sides & Simple Toast",vi:"Món gọi lẻ",id:"Menu Satuan"},
+  "活力飲品":{en:"Drinks",vi:"Đồ uống",id:"Minuman"}
+};
+var SAUCE_I18N={
+  "自製醬油":{en:"House-made soy sauce",vi:"Nước tương nhà làm",id:"Kecap asin buatan sendiri"},
+  "自製番茄醬":{en:"House-made ketchup",vi:"Tương cà nhà làm",id:"Saus tomat buatan sendiri"},
+  "不要醬":{en:"No sauce",vi:"Không sốt",id:"Tanpa saus"}
+};
+var ADDON_I18N={
+  cheese:{zh:"+起士 10元",en:"+Cheese $10",vi:"+Phô mai $10",id:"+Keju $10"},
+  egg:{zh:"+蛋 15元",en:"+Egg $15",vi:"+Trứng $15",id:"+Telur $15"}
+};
+/* 每個品項：[中文名稱, 中文描述, {en:[名稱,描述], vi:[...], id:[...]}] */
+var ITEM_I18N={
+  1:["原味招牌蛋餅","每日新鮮手煎餅皮+自製醬料",{en:["Signature Original Crepe","Crepe hand-cooked fresh daily, with house-made sauce"],vi:["Bánh crepe truyền thống đặc biệt","Vỏ bánh tráng tay tươi mỗi ngày, kèm nước sốt nhà làm"],id:["Crepe Original Andalan","Kulit crepe segar dibuat tiap hari, dengan saus buatan sendiri"]}],
+  2:["玉米蛋餅","香甜玉米粒，口感豐富",{en:["Corn Crepe","Sweet corn kernels, rich texture"],vi:["Bánh crepe bắp","Bắp ngọt, đậm đà"],id:["Crepe Jagung","Jagung manis, teksturnya kaya"]}],
+  3:["紅蘿蔔蛋餅","健康蔬食，清甜爽口",{en:["Carrot Crepe","Healthy veggies, light and sweet"],vi:["Bánh crepe cà rốt","Rau củ lành mạnh, ngọt thanh"],id:["Crepe Wortel","Sayuran sehat, manis dan segar"]}],
+  4:["塔香蛋餅","九層塔香氣四溢",{en:["Thai Basil Crepe","Full of fragrant Thai basil"],vi:["Bánh crepe húng quế","Thơm lừng húng quế"],id:["Crepe Basil Thai","Aroma basil yang harum"]}],
+  5:["青椒蛋餅","清脆青椒，清爽健康",{en:["Green Pepper Crepe","Crunchy green pepper, light and healthy"],vi:["Bánh crepe ớt chuông xanh","Ớt chuông giòn, thanh mát"],id:["Crepe Paprika Hijau","Paprika renyah, segar dan sehat"]}],
+  6:["起士蛋餅","濃郁起士，香氣滿溢",{en:["Cheese Crepe","Rich, fragrant cheese"],vi:["Bánh crepe phô mai","Phô mai béo thơm"],id:["Crepe Keju","Keju yang gurih dan harum"]}],
+  7:["金針菇蛋餅","鮮嫩金針菇，口感Q彈",{en:["Enoki Mushroom Crepe","Tender enoki mushrooms, chewy bite"],vi:["Bánh crepe nấm kim châm","Nấm kim châm mềm, dai ngon"],id:["Crepe Jamur Enoki","Jamur enoki lembut dan kenyal"]}],
+  8:["高麗菜蛋餅","新鮮高麗菜，清甜爽脆",{en:["Cabbage Crepe","Fresh cabbage, sweet and crisp"],vi:["Bánh crepe bắp cải","Bắp cải tươi, ngọt giòn"],id:["Crepe Kubis","Kubis segar, manis dan renyah"]}],
+  9:["馬鈴薯蛋餅","鬆軟馬鈴薯，飽足感十足",{en:["Potato Crepe","Fluffy potato, very filling"],vi:["Bánh crepe khoai tây","Khoai tây bùi, ăn no lâu"],id:["Crepe Kentang","Kentang lembut, mengenyangkan"]}],
+  10:["地瓜蛋餅","香甜地瓜，自然甜味",{en:["Sweet Potato Crepe","Naturally sweet sweet potato"],vi:["Bánh crepe khoai lang","Khoai lang ngọt tự nhiên"],id:["Crepe Ubi","Ubi dengan rasa manis alami"]}],
+  11:["南瓜蛋餅","濃郁南瓜，營養豐富",{en:["Pumpkin Crepe","Rich pumpkin, full of nutrients"],vi:["Bánh crepe bí đỏ","Bí đỏ đậm vị, giàu dinh dưỡng"],id:["Crepe Labu","Labu yang lembut dan bergizi"]}],
+  12:["總匯蛋餅","多種食材，豐盛美味",{en:["Deluxe Combo Crepe","Loaded with a variety of fillings"],vi:["Bánh crepe thập cẩm","Nhiều loại nhân, đầy đặn"],id:["Crepe Spesial Komplit","Aneka isian, lengkap dan lezat"]}],
+  13:["玉米蛋吐司","內含生菜、黃瓜、蕃茄",{en:["Corn & Egg Toast","With lettuce, cucumber and tomato"],vi:["Bánh mì nướng trứng bắp","Có xà lách, dưa leo, cà chua"],id:["Roti Telur Jagung","Berisi selada, timun, dan tomat"]}],
+  14:["水果吐司","新鮮水果，清爽美味",{en:["Fruit Toast","Fresh fruit, light and tasty"],vi:["Bánh mì nướng trái cây","Trái cây tươi, thanh mát"],id:["Roti Buah","Buah segar, segar dan lezat"]}],
+  15:["香煎馬鈴薯吐司","香煎馬鈴薯，鬆軟可口",{en:["Pan-fried Potato Toast","Pan-fried potato, soft and tasty"],vi:["Bánh mì nướng khoai tây áp chảo","Khoai tây áp chảo, mềm thơm"],id:["Roti Kentang Panggang","Kentang dipanggang, lembut dan lezat"]}],
+  16:["香煎地瓜吐司","香甜地瓜，健康美味",{en:["Pan-fried Sweet Potato Toast","Sweet and wholesome"],vi:["Bánh mì nướng khoai lang áp chảo","Khoai lang ngọt, lành mạnh"],id:["Roti Ubi Panggang","Ubi manis, sehat dan lezat"]}],
+  17:["歐姆起司蛋吐司","含起士，濃郁香滑",{en:["Omelette & Cheese Toast","With cheese, rich and smooth"],vi:["Bánh mì nướng trứng ốp lết phô mai","Có phô mai, béo mịn"],id:["Roti Omelet Keju","Dengan keju, gurih dan lembut"]}],
+  18:["南瓜蛋吐司","南瓜內餡，營養滿分",{en:["Pumpkin & Egg Toast","Pumpkin filling, very nutritious"],vi:["Bánh mì nướng trứng bí đỏ","Nhân bí đỏ, giàu dinh dưỡng"],id:["Roti Telur Labu","Isi labu, kaya gizi"]}],
+  19:["馬鈴薯歐姆蛋吐司","含起士，豐盛飽足",{en:["Potato Omelette Toast","With cheese, hearty and filling"],vi:["Bánh mì nướng ốp lết khoai tây","Có phô mai, ăn no lâu"],id:["Roti Omelet Kentang","Dengan keju, mengenyangkan"]}],
+  20:["地瓜歐姆蛋吐司","含起士，香甜濃郁",{en:["Sweet Potato Omelette Toast","With cheese, sweet and rich"],vi:["Bánh mì nướng ốp lết khoai lang","Có phô mai, ngọt béo"],id:["Roti Omelet Ubi","Dengan keju, manis dan gurih"]}],
+  21:["地瓜總匯吐司","含起士，多種食材",{en:["Sweet Potato Club Toast","With cheese and a variety of fillings"],vi:["Bánh mì nướng thập cẩm khoai lang","Có phô mai, nhiều loại nhân"],id:["Roti Isi Komplit Ubi","Dengan keju dan aneka isian"]}],
+  22:["馬鈴薯總匯吐司","含起士，豐盛總匯",{en:["Potato Club Toast","With cheese, a hearty combo"],vi:["Bánh mì nướng thập cẩm khoai tây","Có phô mai, đầy đặn"],id:["Roti Isi Komplit Kentang","Dengan keju, isian lengkap"]}],
+  23:["花生吐司","香濃花生醬，經典美味",{en:["Peanut Butter Toast","Rich peanut butter, a classic"],vi:["Bánh mì bơ đậu phộng","Bơ đậu phộng béo thơm, vị truyền thống"],id:["Roti Selai Kacang","Selai kacang gurih, rasa klasik"]}],
+  24:["巧克力吐司","香甜巧克力，幸福滋味",{en:["Chocolate Toast","Sweet chocolate spread"],vi:["Bánh mì sô-cô-la","Sô-cô-la ngọt ngào"],id:["Roti Cokelat","Selai cokelat yang manis"]}],
+  25:["芝麻吐司","香濃芝麻，營養豐富",{en:["Sesame Toast","Rich sesame spread, nutritious"],vi:["Bánh mì mè","Mè thơm béo, bổ dưỡng"],id:["Roti Wijen","Selai wijen gurih dan bergizi"]}],
+  26:["香煎馬鈴薯片","香脆馬鈴薯，酥脆好吃",{en:["Pan-fried Potato Slices","Crispy and tasty"],vi:["Khoai tây lát áp chảo","Giòn thơm, ngon miệng"],id:["Irisan Kentang Panggang","Renyah dan lezat"]}],
+  27:["香煎地瓜片","香甜地瓜片，健康美味",{en:["Pan-fried Sweet Potato Slices","Sweet and wholesome"],vi:["Khoai lang lát áp chảo","Ngọt bùi, lành mạnh"],id:["Irisan Ubi Panggang","Manis dan sehat"]}],
+  28:["厚蛋歐姆","含起士，厚實香滑",{en:["Thick Omelette","With cheese, thick and smooth"],vi:["Trứng ốp lết dày","Có phô mai, dày và mềm"],id:["Omelet Tebal","Dengan keju, tebal dan lembut"]}],
+  29:["非基改豆漿","純正豆漿，香醇濃郁",{en:["Non-GMO Soy Milk","Pure, rich soy milk"],vi:["Sữa đậu nành không biến đổi gen","Sữa đậu nành nguyên chất, thơm béo"],id:["Susu Kedelai Non-GMO","Susu kedelai murni, gurih dan harum"]}],
+  30:["高山紅茶","清香高山紅茶，提神醒腦",{en:["High Mountain Black Tea","Fragrant mountain-grown black tea, refreshing"],vi:["Hồng trà cao sơn","Hồng trà vùng núi cao thơm nhẹ, giúp tỉnh táo"],id:["Teh Hitam Pegunungan","Teh hitam pegunungan yang harum dan menyegarkan"]}],
+  31:["豆漿紅茶","豆漿加紅茶，獨特風味",{en:["Soy Milk Black Tea","Soy milk with black tea, a unique blend"],vi:["Hồng trà sữa đậu nành","Sữa đậu nành pha hồng trà, hương vị độc đáo"],id:["Teh Hitam Susu Kedelai","Perpaduan susu kedelai dan teh hitam"]}],
+  32:["芝麻豆漿","芝麻豆漿，香濃順口",{en:["Sesame Soy Milk","Smooth and nutty"],vi:["Sữa đậu nành mè","Thơm béo, dễ uống"],id:["Susu Kedelai Wijen","Gurih dan lembut"]}],
+  33:["無糖豆漿","",{en:["Unsweetened Soy Milk",""],vi:["Sữa đậu nành không đường",""],id:["Susu Kedelai Tanpa Gula",""]}]
+};
+
+function detectLang(){
+  try{var s=localStorage.getItem("lang");if(s&&T[s])return s;}catch(e){}
+  var list=(navigator.languages&&navigator.languages.length)?navigator.languages:[navigator.language||"zh"];
+  for(var i=0;i<list.length;i++){
+    var l=String(list[i]).toLowerCase();
+    if(l.indexOf("zh")===0)return "zh";
+    if(l.indexOf("vi")===0)return "vi";
+    if(l.indexOf("id")===0||l.indexOf("in")===0||l.indexOf("ms")===0)return "id";
+    if(l.indexOf("en")===0)return "en";
+  }
+  return "zh";
+}
+var lang=detectLang();
+function curLang(){return isAdmin?"zh":lang;}          // 管理模式一律中文
+function t(k,vars){
+  var s=(T[curLang()]&&T[curLang()][k]);if(s==null)s=T.zh[k];
+  if(vars)for(var v in vars)s=s.split("{"+v+"}").join(vars[v]);
+  return s;
+}
+function itemName(it){var L=curLang();var tr=ITEM_I18N[it.id];return (L!=="zh"&&tr&&tr[0]===it.name&&tr[2][L])?tr[2][L][0]:it.name;}
+function itemDesc(it){var L=curLang();var tr=ITEM_I18N[it.id];return (L!=="zh"&&tr&&tr[1]===(it.desc||"")&&tr[2][L])?tr[2][L][1]:(it.desc||"");}
+function catName(c){var L=curLang();var tr=CAT_I18N[c];return (L!=="zh"&&tr&&tr[L])?tr[L]:c;}
+function sauceName(s){var L=curLang();var tr=SAUCE_I18N[s];return (L!=="zh"&&tr&&tr[L])?tr[L]:s;}
+function addonName(o){var L=curLang();var tr=ADDON_I18N[o.key];return (L!=="zh"&&tr&&tr[L])?tr[L]:o.label;}
+function setLang(l){
+  if(!T[l])return;lang=l;
+  try{localStorage.setItem("lang",l);}catch(e){}
+  applyStaticText();render();
+  if(document.getElementById("cart-panel").style.display==="block")renderCart();
+  if(opt&&document.getElementById("opt-panel").style.display==="block")renderOpt();
+}
+</script>
 <script>
 var NOTIFY_API="https://food-order-api-two.vercel.app/api/notify";
 var MENU_API="https://food-order-api-two.vercel.app/api/menu";
@@ -254,7 +406,14 @@ var DEFAULT_MAX_ID=0;menu.forEach(function(c){c.items.forEach(function(i){if(i.i
 function pad(n){return (n<10?"0":"")+n;}
 function dateKey(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());}
 function todayKey(){return dateKey(new Date());}
-function dateLabel(d){return (d.getMonth()+1)+"/"+d.getDate()+"（"+WEEK[d.getDay()]+"）";}
+// 傳到廚房的日期一律中文
+function dateLabelZh(d){return (d.getMonth()+1)+"/"+d.getDate()+"（"+WEEK[d.getDay()]+"）";}
+function dateLabel(d){
+  var L=curLang();if(L==="zh")return dateLabelZh(d);
+  var w=WEEKS[L][d.getDay()];
+  if(L==="en")return w+" "+(d.getMonth()+1)+"/"+d.getDate();
+  return d.getDate()+"/"+(d.getMonth()+1)+" ("+w+")";   // 越南、印尼習慣 日/月
+}
 function startOfDay(d){var x=new Date(d);x.setHours(0,0,0,0);return x;}
 function hoursFor(d){
   var day=d.getDay();
@@ -279,7 +438,7 @@ function nextBizDay(){
 }
 function preLabel(){
   var nb=nextBizDay();var tmr=startOfDay(new Date());tmr.setDate(tmr.getDate()+1);
-  return (dateKey(nb)===dateKey(tmr)?"明天 ":"")+dateLabel(nb);
+  return (dateKey(nb)===dateKey(tmr)?t("tomorrow"):"")+dateLabel(nb);
 }
 function targetDate(){return orderMode==="pre"?nextBizDay():startOfDay(new Date());}
 function isClosedToday(){return settings.closedDate===todayKey();}
@@ -509,7 +668,9 @@ function addLine(id,sauceVal,ad,qty){
 }
 function totalQty(id){var t=0;for(var i=0;i<cartLines.length;i++)if(cartLines[i].id===id)t+=cartLines[i].qty;return t;}
 function addonPriceOf(id,ad){var t=0;var o=getOpts(id);for(var k=0;k<o.length;k++)if(ad[o[k].key])t+=o[k].price;return t;}
-function addonLabelOf(id,ad){var l=[];var o=getOpts(id);for(var k=0;k<o.length;k++)if(ad[o[k].key])l.push(o[k].label);return l.join("、");}
+// display=true 時給客人看（翻譯），否則給廚房（中文）
+function addonLabelOf(id,ad,display){var l=[];var o=getOpts(id);for(var k=0;k<o.length;k++)if(ad[o[k].key])l.push(display?addonName(o[k]):o[k].label);return l.join(display&&curLang()!=="zh"?", ":"、");}
+function colon(){return curLang()==="zh"?"：":": ";}
 
 function addItem(id){
   if(itemBlocked(id))return;
@@ -541,21 +702,21 @@ function optAddon(k){opt.addons[k]=!opt.addons[k];renderOpt();}
 function optQty(d){opt.qty=Math.max(1,opt.qty+d);renderOpt();}
 function renderOpt(){
   var it=buildImap()[opt.id];var sec=secOf(opt.id);var o=getOpts(opt.id);
-  document.getElementById("opt-title").textContent=it.name;
-  var h='<div style="font-size:14px;color:#5a7a5a">'+it.desc+'</div>';
+  document.getElementById("opt-title").textContent=itemName(it);
+  var h='<div style="font-size:14px;color:#5a7a5a">'+itemDesc(it)+'</div>';
   if(o.length){
-    h+='<div class="opt-label">加料</div><div class="addon-row">';
-    for(var k=0;k<o.length;k++)h+='<button class="addon-btn '+(opt.addons[o[k].key]?'selected':'')+'" onclick="optAddon(\''+o[k].key+'\')">'+o[k].label+'</button>';
+    h+='<div class="opt-label">'+t("addons")+'</div><div class="addon-row">';
+    for(var k=0;k<o.length;k++)h+='<button class="addon-btn '+(opt.addons[o[k].key]?'selected':'')+'" onclick="optAddon(\''+o[k].key+'\')">'+addonName(o[k])+'</button>';
     h+='</div>';
   }
   if(sec.hasSauce){
-    h+='<div class="opt-label">醬料</div><div class="sauce-row">';
-    for(var k=0;k<sauceOptions.length;k++){var sv=sauceOptions[k];h+='<button class="sauce-btn '+(opt.sauce===sv?'selected':'')+'" onclick="optSauce(\''+sv+'\')">'+sv+'</button>';}
+    h+='<div class="opt-label">'+t("sauce")+'</div><div class="sauce-row">';
+    for(var k=0;k<sauceOptions.length;k++){var sv=sauceOptions[k];h+='<button class="sauce-btn '+(opt.sauce===sv?'selected':'')+'" onclick="optSauce(\''+sv+'\')">'+sauceName(sv)+'</button>';}
     h+='</div>';
   }
   var unit=it.price+addonPriceOf(opt.id,opt.addons);
-  h+='<div class="opt-qty-row"><span style="font-size:14px;color:#5a7a5a">數量</span><div class="qty-control"><button class="qty-btn minus" onclick="optQty(-1)">-</button><span class="qty-num">'+opt.qty+'</span><button class="qty-btn plus" onclick="optQty(1)">+</button></div></div>';
-  h+='<button class="order-btn" onclick="confirmOpt()">加入購物車　$'+(unit*opt.qty)+'</button>';
+  h+='<div class="opt-qty-row"><span style="font-size:14px;color:#5a7a5a">'+t("qty")+'</span><div class="qty-control"><button class="qty-btn minus" onclick="optQty(-1)">-</button><span class="qty-num">'+opt.qty+'</span><button class="qty-btn plus" onclick="optQty(1)">+</button></div></div>';
+  h+='<button class="order-btn" onclick="confirmOpt()">'+t("addToCart")+'　$'+(unit*opt.qty)+'</button>';
   document.getElementById("opt-body").innerHTML=h;
 }
 function confirmOpt(){
@@ -570,7 +731,7 @@ function setMode(m){
   if(m==="today"){
     var before=cartLines.length;
     cartLines=cartLines.filter(function(l){return !isSoldOutToday(l.id);});
-    if(cartLines.length<before)alert("今天已售完的餐點已從購物車移除");
+    if(cartLines.length<before)alert(t("soldOutRemoved"));
   }
   render();
   if(document.getElementById("cart-panel").style.display==="block")renderCart();
@@ -578,7 +739,7 @@ function setMode(m){
 function showPanel(id){document.getElementById("overlay").style.display="block";document.getElementById(id).style.display="block";}
 function openCart(){
   if(!isAdmin&&orderMode==="today"&&!todayAvailable()){
-    alert("今天目前無法點餐，可以切換到「預訂 "+preLabel()+"」先訂好餐點喔！");return;
+    alert(t("cantOrderToday",{d:preLabel()}));return;
   }
   showPanel("cart-panel");renderCart();
 }
@@ -587,32 +748,32 @@ function closePanel(){
   ["cart-panel","opt-panel","add-item-panel","add-cat-panel"].forEach(function(id){document.getElementById(id).style.display="none";});
 }
 function closeSuccess(){document.getElementById("success-overlay").style.display="none";}
-function render(){renderTabs();renderModeBar();renderNotice();renderAdminBar();renderMenu();renderCount();}
+function render(){applyStaticText();renderTabs();renderModeBar();renderNotice();renderAdminBar();renderMenu();renderCount();}
 
 function renderTabs(){
-  var h='<button class="cat-tab '+(activeCat===-1?'active':'')+'" onclick="setCat(-1)">全部</button>';
-  for(var i=0;i<menu.length;i++)h+='<button class="cat-tab '+(activeCat===i?'active':'')+'" onclick="setCat('+i+')">'+menu[i].cat+'</button>';
+  var h='<button class="cat-tab '+(activeCat===-1?'active':'')+'" onclick="setCat(-1)">'+t("all")+'</button>';
+  for(var i=0;i<menu.length;i++)h+='<button class="cat-tab '+(activeCat===i?'active':'')+'" onclick="setCat('+i+')">'+catName(menu[i].cat)+'</button>';
   document.getElementById("cat-tabs").innerHTML=h;
 }
 function renderModeBar(){
   var td=startOfDay(new Date());
-  var h='<button class="mode-tab '+(orderMode==="today"?'active':'')+'" onclick="setMode(\'today\')">今天取餐<br><small>'+dateLabel(td)+'</small></button>';
-  h+='<button class="mode-tab '+(orderMode==="pre"?'active':'')+'" onclick="setMode(\'pre\')">預訂<br><small>'+preLabel()+'</small></button>';
+  var h='<button class="mode-tab '+(orderMode==="today"?'active':'')+'" onclick="setMode(\'today\')">'+t("today")+'<br><small>'+dateLabel(td)+'</small></button>';
+  h+='<button class="mode-tab '+(orderMode==="pre"?'active':'')+'" onclick="setMode(\'pre\')">'+t("pre")+'<br><small>'+preLabel()+'</small></button>';
   document.getElementById("mode-tabs").innerHTML=h;
 }
 function renderNotice(){
   var el=document.getElementById("notice");
   if(orderMode==="today"&&!todayAvailable()){
     var reason;
-    if(new Date().getDay()===0)reason="今日公休";
-    else if(isClosedToday())reason="&#128683; 今日暫停點餐，造成不便敬請見諒";
-    else reason="今日點餐已截止";
+    if(new Date().getDay()===0)reason=t("closedSun");
+    else if(isClosedToday())reason=t("closedToday");
+    else reason=t("cutoff");
     el.className="notice closed";
-    el.innerHTML=reason+'<br><button onclick="setMode(\'pre\')">改為預訂 '+preLabel()+'</button>';
+    el.innerHTML=reason+'<br><button onclick="setMode(\'pre\')">'+t("switchPre",{d:preLabel()})+'</button>';
     el.style.display="block";
   } else if(orderMode==="pre"){
     el.className="notice pre";
-    el.innerHTML="&#128197; 您正在預訂 <b>"+preLabel()+"</b> 的餐點";
+    el.innerHTML=t("preNotice",{d:preLabel()});
     el.style.display="block";
   } else {el.style.display="none";}
 }
@@ -639,7 +800,7 @@ function renderMenu(){
   var h="";
   for(var si=0;si<list.length;si++){
     var sec=list[si];var ci=menu.indexOf(sec);
-    h+='<div class="section-title">'+sec.cat;
+    h+='<div class="section-title">'+catName(sec.cat);
     if(isAdmin)h+='<div style="display:flex;gap:4px"><button class="add-item-btn" onclick="openAddItem('+ci+')">+ 新增</button><button class="del-cat-btn" onclick="deleteCat('+ci+')">刪除</button></div>';
     h+='</div><div class="menu-grid">';
     for(var i=0;i<sec.items.length;i++){
@@ -647,17 +808,17 @@ function renderMenu(){
       var so=isAdmin?isSoldOutToday(it.id):itemBlocked(it.id);
       var withOpt=sec.hasSauce||sec.hasAddons;
       h+='<div class="menu-card'+(so?' sold-out':'')+'">';
-      if(so)h+='<div class="sold-out-badge">'+(isAdmin?'今日售完':'售完')+'</div>';
-      else if(it.hot)h+='<div class="popular-badge">熱銷</div>';
-      h+='<div class="card-top">'+imgHtml(it)+'<div class="item-info"><div class="item-name'+(so?' faded':'')+'">'+it.name+'</div><div class="item-desc">'+it.desc+'</div></div>';
+      if(so)h+='<div class="sold-out-badge">'+(isAdmin?'今日售完':t("soldOut"))+'</div>';
+      else if(it.hot)h+='<div class="popular-badge">'+t("hot")+'</div>';
+      h+='<div class="card-top">'+imgHtml(it)+'<div class="item-info"><div class="item-name'+(so?' faded':'')+'">'+itemName(it)+'</div><div class="item-desc">'+itemDesc(it)+'</div></div>';
       h+='<div class="item-right"><div class="item-price'+(so?' faded':'')+'">$'+it.price+'</div>';
       if(!isAdmin){
-        if(so){h+='<button class="sold-out-btn">售完</button>';}
+        if(so){h+='<button class="sold-out-btn">'+t("soldOut")+'</button>';}
         else if(withOpt){
-          if(qt>0)h+='<div class="in-cart">已點 '+qt+' 份</div>';
-          h+='<button class="add-btn" onclick="addItem('+it.id+')">'+(qt>0?'再加一份':'加入')+'</button>';
+          if(qt>0)h+='<div class="in-cart">'+t("inCart",{n:qt})+'</div>';
+          h+='<button class="add-btn" onclick="addItem('+it.id+')">'+(qt>0?t("addMore"):t("add"))+'</button>';
         }
-        else if(qt===0){h+='<button class="add-btn" onclick="addItem('+it.id+')">加入</button>';}
+        else if(qt===0){h+='<button class="add-btn" onclick="addItem('+it.id+')">'+t("add")+'</button>';}
         else{h+='<div class="qty-control"><button class="qty-btn minus" onclick="decSimple('+it.id+')">-</button><span class="qty-num">'+qt+'</span><button class="qty-btn plus" onclick="addItem('+it.id+')">+</button></div>';}
       }
       h+='</div></div>';
@@ -688,32 +849,32 @@ function renderCart(){
   var body=document.getElementById("cart-body");
   var imap=buildImap();
   cartLines=cartLines.filter(function(l){return imap[l.id];});
-  if(cartLines.length===0){body.innerHTML='<div class="empty-cart">購物車是空的，快去選些美食吧！</div>';return;}
+  if(cartLines.length===0){body.innerHTML='<div class="empty-cart">'+t("emptyCart")+'</div>';return;}
   var td=targetDate();var h="";
-  h+='<div class="pickup-info"><span>'+(orderMode==="pre"?'&#128197; 預訂取餐：':'&#128338; 今天取餐：')+dateLabel(td)+'</span>';
-  if(orderMode==="today")h+='<button class="link-btn" onclick="setMode(\'pre\')">改預訂</button>';
-  else if(todayAvailable())h+='<button class="link-btn" onclick="setMode(\'today\')">改今天</button>';
+  h+='<div class="pickup-info"><span>'+(orderMode==="pre"?t("pickPre"):t("pickToday"))+dateLabel(td)+'</span>';
+  if(orderMode==="today")h+='<button class="link-btn" onclick="setMode(\'pre\')">'+t("toPre")+'</button>';
+  else if(todayAvailable())h+='<button class="link-btn" onclick="setMode(\'today\')">'+t("toToday")+'</button>';
   h+='</div>';
   var tc=0,tp=0;
   for(var i=0;i<cartLines.length;i++){
     var l=cartLines[i];var it=imap[l.id];var up=it.price+addonPriceOf(l.id,l.addons);
     tc+=l.qty;tp+=up*l.qty;
-    h+='<div class="cart-item"><div class="cart-item-info"><div class="cart-item-name">'+it.name+'</div>';
-    if(l.sauce)h+='<div class="cart-item-sub">醬料：'+l.sauce+'</div>';
-    var al=addonLabelOf(l.id,l.addons);if(al)h+='<div class="cart-item-sub">加購：'+al+'</div>';
+    h+='<div class="cart-item"><div class="cart-item-info"><div class="cart-item-name">'+itemName(it)+'</div>';
+    if(l.sauce)h+='<div class="cart-item-sub">'+t("sauce")+colon()+sauceName(l.sauce)+'</div>';
+    var al=addonLabelOf(l.id,l.addons,true);if(al)h+='<div class="cart-item-sub">'+t("addons")+colon()+al+'</div>';
     h+='<div class="cart-item-sub">$'+up+' x '+l.qty+'</div></div>';
     h+='<div class="qty-control"><button class="qty-btn minus" onclick="changeLine('+i+',-1)">-</button><span class="qty-num">'+l.qty+'</span><button class="qty-btn plus" onclick="changeLine('+i+',1)">+</button></div></div>';
   }
-  h+='<div class="cart-summary"><div class="summary-row"><span>品項數量</span><span>'+tc+' 件</span></div><div class="summary-total"><span>合計</span><span>$'+tp+'</span></div></div>';
+  h+='<div class="cart-summary"><div class="summary-row"><span>'+t("itemCount")+'</span><span>'+t("pcs",{n:tc})+'</span></div><div class="summary-total"><span>'+t("total")+'</span><span>$'+tp+'</span></div></div>';
   var times=slotsFor(td,orderMode==="today");
-  h+='<label class="field-label">取餐時間</label><select class="time-select" id="pickup-time"><option value="">請選擇取餐時間</option>';
+  h+='<label class="field-label">'+t("pickupTime")+'</label><select class="time-select" id="pickup-time"><option value="">'+t("chooseTime")+'</option>';
   for(var i=0;i<times.length;i++)h+='<option>'+times[i]+'</option>';
   h+='</select>';
-  if(times.length===0)h+='<div class="warn-msg">今天已無可取餐時段，請改為預訂</div>';
-  h+='<label class="field-label">手機號碼</label><input class="field-input" id="phone-input" type="tel" inputmode="numeric" maxlength="12" placeholder="例：0912345678"/>';
-  h+='<label class="field-label">備註（外帶/內用桌號/特殊需求）</label><textarea class="note-input" id="note-input" rows="2" placeholder="例：外帶、內用3號桌..."></textarea>';
-  h+='<div class="saving-msg" id="sending-msg" style="display:none">傳送中...</div>';
-  h+='<button class="order-btn" id="order-btn" onclick="placeOrder()"'+(times.length===0?' disabled':'')+'>'+(orderMode==="pre"?'確認預訂':'立即下單')+'</button>';
+  if(times.length===0)h+='<div class="warn-msg">'+t("noSlots")+'</div>';
+  h+='<label class="field-label">'+t("phone")+'</label><input class="field-input" id="phone-input" type="tel" inputmode="numeric" maxlength="12" placeholder="'+t("phonePh")+'"/>';
+  h+='<label class="field-label">'+t("note")+'</label><textarea class="note-input" id="note-input" rows="2" placeholder="'+t("notePh")+'"></textarea>';
+  h+='<div class="saving-msg" id="sending-msg" style="display:none">'+t("sending")+'</div>';
+  h+='<button class="order-btn" id="order-btn" onclick="placeOrder()"'+(times.length===0?' disabled':'')+'>'+(orderMode==="pre"?t("confirmPre"):t("orderNow"))+'</button>';
   body.innerHTML=h;
   restoreForm();
 }
@@ -727,24 +888,24 @@ function placeOrder(){
   if(cartLines.length===0)return;
   var phoneRaw=document.getElementById("phone-input").value.trim();
   var digits=phoneRaw.replace(/\D/g,"");
-  if(!/^09\d{8}$/.test(digits)){alert("請輸入正確的手機號碼（09 開頭共 10 碼）");return;}
+  if(!/^09\d{8}$/.test(digits)){alert(t("badPhone"));return;}
   var time=document.getElementById("pickup-time").value;
-  if(!time){alert("請選擇取餐時間！");return;}
+  if(!time){alert(t("needTime"));return;}
   var note=document.getElementById("note-input").value;
   var mode=orderMode;
   saveForm();
-  setSending(true,"確認中...");
+  setSending(true,t("checking"));
 
   // 下單前重新抓雲端狀態，確認沒有臨時關閉或售完
   loadMenu().then(function(){
     var imap=buildImap();
     var missing=cartLines.filter(function(l){return !imap[l.id];});
-    if(missing.length){removeLinesOf(missing.map(function(l){return l.id;}));renderCount();renderCart();alert("部分餐點已下架，已從購物車移除，請確認後再下單。");return;}
+    if(missing.length){removeLinesOf(missing.map(function(l){return l.id;}));renderCount();renderCart();alert(t("removedItems"));return;}
     if(mode==="today"){
-      if(isClosedToday()){renderCart();alert("很抱歉，今日已暫停點餐，可改為預訂 "+preLabel()+"。");return;}
+      if(isClosedToday()){renderCart();alert(t("closedNow",{d:preLabel()}));return;}
       var soldIds=cartLines.filter(function(l){return isSoldOutToday(l.id);}).map(function(l){return l.id;});
-      if(soldIds.length){removeLinesOf(soldIds);renderCount();renderMenu();renderCart();alert("部分餐點剛剛售完，已從購物車移除，請確認後再下單。");return;}
-      if(slotsFor(new Date(),true).indexOf(time)<0){formCache["pickup-time"]="";renderCart();alert("您選的取餐時間已經過了，請重新選擇。");return;}
+      if(soldIds.length){removeLinesOf(soldIds);renderCount();renderMenu();renderCart();alert(t("justSoldOut"));return;}
+      if(slotsFor(new Date(),true).indexOf(time)<0){formCache["pickup-time"]="";renderCart();alert(t("timePassed"));return;}
     }
     var td=mode==="pre"?nextBizDay():startOfDay(new Date());
     var items=cartLines.map(function(l){
@@ -756,25 +917,26 @@ function placeOrder(){
     });
     var total=items.reduce(function(s,i){return s+(i.price+(i.addonPrice||0))*i.qty;},0);
     var oid=digits.slice(-3);
-    var pickupText=(mode==="pre"?"【預訂】":"")+dateLabel(td)+" "+time;
-    setSending(true,"送出中...");
+    var pickupText=(mode==="pre"?"【預訂】":"")+dateLabelZh(td)+" "+time;
+    setSending(true,t("submitting"));
     return fetch(NOTIFY_API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
       items:items,total:total,note:note,orderId:oid,phone:digits,
-      pickup:pickupText,pickupDate:dateKey(td),pickupTime:time,preorder:mode==="pre"
+      pickup:pickupText,pickupDate:dateKey(td),pickupTime:time,preorder:mode==="pre",lang:lang
     })})
     .then(function(r){
       if(!r.ok)throw new Error("HTTP "+r.status);
       cartLines=[];formCache={"phone-input":phoneRaw};
       document.getElementById("cart-body").innerHTML="";
       closePanel();render();
-      document.getElementById("success-msg").innerHTML=(mode==="pre"?"預訂成功！":"感謝您的訂購！")+"<br>訂單編號：#"+oid+"<br>取餐時間："+dateLabel(td)+" "+time+"<br>"+(mode==="pre"?"當天我們會準時為您準備":"請稍候，我們盡快為您準備");
+      document.getElementById("success-title").textContent=t("successTitle");
+      document.getElementById("success-msg").innerHTML=(mode==="pre"?t("successPre"):t("thanks"))+"<br>"+t("orderNo")+"#"+oid+"<br>"+t("pickupAt")+dateLabel(td)+" "+time+"<br>"+(mode==="pre"?t("readyPre"):t("readyNow"));
       document.getElementById("success-overlay").style.display="flex";
     });
   })
   .catch(function(e){
     console.error(e);
     setSending(false);
-    alert("訂單送出失敗，請再試一次，或直接致電店家點餐。");
+    alert(t("sendFail"));
   })
   .then(function(){
     var b=document.getElementById("order-btn");
@@ -786,14 +948,20 @@ function placeOrder(){
   });
 }
 
-// 顯示今日營業時間
-(function(){
+// 固定在頁面上的文字（營業時間、按鈕、語言選單）
+function applyStaticText(){
+  var L=curLang();
+  document.documentElement.lang={zh:"zh-TW",en:"en",vi:"vi",id:"id"}[L];
   var day=new Date().getDay();
-  var el=document.getElementById("biz-hours");
-  if(day===0)el.textContent="今日公休（週日）・可預訂週一";
-  else if(day===6)el.textContent="今日營業：06:30-11:00（週六）";
-  else el.textContent="今日營業：06:30-13:00（平日）";
-})();
+  document.getElementById("biz-hours").textContent=day===0?t("hoursSun"):(day===6?t("hoursSat"):t("hoursWk"));
+  document.getElementById("cart-label").textContent=t("cart");
+  document.getElementById("cart-title").textContent=t("myOrder");
+  document.getElementById("success-btn").textContent=t("continueBtn");
+  var sel=document.getElementById("lang-select");
+  if(!sel.options.length)sel.innerHTML=LANGS.map(function(x){return '<option value="'+x[0]+'">'+x[1]+'</option>';}).join("");
+  sel.value=lang;
+  sel.style.display=isAdmin?"none":"";
+}
 if(!todayAvailable())orderMode="pre";
 render();
 loadMenu();
