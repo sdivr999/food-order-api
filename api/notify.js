@@ -13,13 +13,16 @@ export default async function handler(req, res) {
   const esc = (s) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
   try {
-    const { items = [], total = 0, note = "", orderId = "", phone = "", pickup = "", preorder = false } = req.body || {};
+    const { items = [], total = 0, note = "", orderId = "", phone = "", pickup = "", preorder = false, lang = "zh" } = req.body || {};
+    const LANG_NAMES = { en: "英文", vi: "越南文", id: "印尼文" };
     if (!items.length) return res.status(400).json({ error: "訂單沒有品項" });
 
     const lines = [];
     lines.push(preorder ? `📅 <b>預訂訂單 #${esc(orderId)}</b>` : `🆕 <b>新訂單 #${esc(orderId)}</b>`);
     lines.push(`🕒 取餐：<b>${esc(pickup)}</b>`);
     lines.push(`📞 電話：${esc(phone)}`);
+    // 客人用外語介面點餐時提醒店員（餐點名稱仍是中文）
+    if (LANG_NAMES[lang]) lines.push(`🌐 客人使用：${LANG_NAMES[lang]}介面`);
     lines.push("──────────");
     for (const it of items) {
       const unit = (it.price || 0) + (it.addonPrice || 0);
